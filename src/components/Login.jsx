@@ -28,7 +28,7 @@ const Login = () => {
 
             if (response.data.success) {
                 localStorage.setItem('isAuthenticated', 'true');
-                navigate('/enquiries');
+                navigate('/admin-accounts');
             }
         } catch (error) {
             setError(error.response?.data?.message || 'Login failed');
