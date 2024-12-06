@@ -22,12 +22,23 @@ const AdminAccounts = () => {
                     }
                 });
 
+                // Log the response to see the data structure
+                console.log('Admin Response:', response.data);
+
                 // Check if response.data.admins exists, otherwise use response.data
                 const adminData = response.data.admins || response.data;
                 
-                // Ensure adminData is an array
+                // Ensure adminData is an array and has required fields
                 if (Array.isArray(adminData)) {
-                    setAdmins(adminData);
+                    // Map and validate each admin object
+                    const validatedAdmins = adminData.map(admin => ({
+                        _id: admin._id || 'N/A',
+                        name: admin.name || 'No Name',
+                        email: admin.email || 'No Email',
+                        role: admin.role || 'Admin'
+                    }));
+                    setAdmins(validatedAdmins);
+                    console.log('Validated Admins:', validatedAdmins);
                 } else {
                     console.error('Admin data is not an array:', adminData);
                     setAdmins([]);
@@ -65,7 +76,6 @@ const AdminAccounts = () => {
         );
     }
 
-    // Check if admins is empty
     if (!admins || admins.length === 0) {
         return (
             <div className="p-6">
@@ -84,10 +94,10 @@ const AdminAccounts = () => {
                         <div className="flex justify-between items-start">
                             <div>
                                 <p className="text-white">
-                                    <span className="font-semibold">Name:</span> {admin.name}
+                                    <span className="font-semibold">Name:</span> {admin.name || 'No Name'}
                                 </p>
                                 <p className="text-white">
-                                    <span className="font-semibold">Email:</span> {admin.email}
+                                    <span className="font-semibold">Email:</span> {admin.email || 'No Email'}
                                 </p>
                                 <p className="text-white">
                                     <span className="font-semibold">Role:</span> {admin.role || 'Admin'}
