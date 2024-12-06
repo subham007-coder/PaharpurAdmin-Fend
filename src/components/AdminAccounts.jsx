@@ -4,77 +4,40 @@ import { useNavigate } from 'react-router-dom';
 
 const AdminAccounts = () => {
     const [admins, setAdmins] = useState([]);
-    const [currentUser, setCurrentUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
-    const fetchCurrentUser = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            
-            const response = await axios.get(
-                'https://paharpur-backend-adminpanel.onrender.com/api/auth/current-user',
-                {
-                    withCredentials: true,
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': token ? `Bearer ${token}` : ''
-                    }
-                }
-            );
-
-            if (response.data.success) {
-                return response.data.user;
-            }
-        } catch (error) {
-            console.error('Error fetching current user:', error);
-            if (error.response?.status === 401) {
-                navigate('/login');
-            }
-            throw error;
-        }
-    };
-
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchAdmins = async () => {
             try {
-                // Get token from localStorage
-                const token = localStorage.getItem('token');
-                if (!token) {
-                    throw new Error('No token found');
+                // Get user data from localStorage
+                const userData = localStorage.getItem('user');
+                if (!userData) {
+                    navigate('/login');
+                    return;
                 }
 
-                // First fetch the current logged-in user
-                const currentUserData = await fetchCurrentUser();
-                setCurrentUser(currentUserData);
+                const currentUser = JSON.parse(userData);
+                const token = localStorage.getItem('token');
 
-                // Then fetch all admins
-                const adminsResponse = await axios.get(
+                const response = await axios.get(
                     'https://paharpur-backend-adminpanel.onrender.com/api/auth/admins',
                     {
-                        withCredentials: true,
                         headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json',
-                            'Authorization': `Bearer ${token}`
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
                         }
                     }
                 );
 
-                const adminData = adminsResponse.data.admins || adminsResponse.data;
-                
-                if (Array.isArray(adminData)) {
-                    setAdmins(adminData);
-                } else {
-                    console.error('Admin data is not an array:', adminData);
-                    setAdmins([]);
+                if (response.data) {
+                    setAdmins(response.data);
                 }
-                setError(null);
             } catch (error) {
-                console.error('Error fetching data:', error);
-                if (error.response?.status === 401 || error.message === 'No token found') {
-                    setError('Please login to view admin accounts');
+                console.error('Error fetching admins:', error);
+                if (error.response?.status === 401) {
+                    localStorage.clear(); // Clear storage on auth error
                     navigate('/login');
                 } else {
                     setError('Failed to fetch admin accounts');
@@ -84,19 +47,19 @@ const AdminAccounts = () => {
             }
         };
 
-        fetchData();
+        fetchAdmins();
     }, [navigate]);
 
-    if (loading) return <div className="flex justify-center items-center h-full"><div className="text-white">Loading...</div></div>;
-    if (error) return <div className="text-red-500 p-4">{error}</div>;
-    if (!admins || admins.length === 0) {
-        return (
-            <div className="p-6">
-                <h2 className="text-2xl font-bold mb-6 text-white">Admin Accounts</h2>
-                <p className="text-white">No admin accounts found.</p>
-            </div>
-        );
+    if (loading) {
+        return <div className="text-white text-center p-4">Loading...</div>;
     }
+
+    if (error) {
+        return <div className="text-red-500 text-center p-4">{error}</div>;
+    }
+
+    // Get current user from localStorage
+    const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
 
     return (
         <div className="p-6">
@@ -109,8 +72,8 @@ const AdminAccounts = () => {
                                 <p className="text-white">
                                     <span className="font-semibold">Username:</span> {admin.username}
                                 </p>
-                                {/* Only show email for the current logged-in user */}
-                                {currentUser && currentUser._id === admin._id && (
+                                {/* Show email only for the current user */}
+                                {currentUser._id === admin._id && (
                                     <p className="text-white">
                                         <span className="font-semibold">Email:</span> {admin.email}
                                     </p>
@@ -118,8 +81,7 @@ const AdminAccounts = () => {
                                 <p className="text-white">
                                     <span className="font-semibold">Role:</span> {admin.role}
                                 </p>
-                                {/* Indicate if this is the current user */}
-                                {currentUser && currentUser._id === admin._id && (
+                                {currentUser._id === admin._id && (
                                     <p className="text-green-500 mt-2 text-sm">
                                         (Current User)
                                     </p>

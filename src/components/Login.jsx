@@ -45,19 +45,13 @@ const Login = () => {
             );
 
             if (response.data.success) {
-                // Store token in localStorage
+                // Store token and user data
                 localStorage.setItem('token', response.data.token);
-                
-                // Store user data if needed
                 localStorage.setItem('user', JSON.stringify(response.data.user));
-
-                // Set axios default headers for future requests
+                
+                // Set default axios header
                 axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
-
-                // Clear any existing errors
-                setError('');
-
-                // Redirect to dashboard
+                
                 navigate('/dashboard');
             } else {
                 setError(response.data.message || 'Login failed. Please try again.');
