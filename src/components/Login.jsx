@@ -15,7 +15,7 @@ const Login = () => {
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (token) {
-            navigate('/dashboard');
+            navigate('/admin-accounts');
         }
     }, [navigate]);
 
@@ -52,7 +52,7 @@ const Login = () => {
                 // Set default axios header
                 axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
                 
-                navigate('/dashboard');
+                navigate('/admin-accounts');
             } else {
                 setError(response.data.message || 'Login failed. Please try again.');
             }
