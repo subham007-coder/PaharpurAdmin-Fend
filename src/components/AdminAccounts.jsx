@@ -18,7 +18,7 @@ const AdminAccounts = () => {
                 }
 
                 const response = await axios.get(
-                    'https://paharpur-backend-adminpanel.onrender.com/api/auth/admins',
+                    'https://paharpur-bend.onrender.com/api/auth/admins',
                     {
                         headers: {
                             'Authorization': `Bearer ${token}`

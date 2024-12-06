@@ -12,7 +12,7 @@ const HeroTextEdit = () => {
     // Fetch existing hero text and description from the backend
     const fetchHeroText = async () => {
       try {
-        const response = await axios.get("https://paharpur-backend-adminpanel.onrender.com/api/hero-text");
+        const response = await axios.get("https://paharpur-bend.onrender.com/api/hero-text");
         setHeroText(response.data.heroText);
         setHeroDescription(response.data.heroDescription);
         setLoading(false);
@@ -28,7 +28,7 @@ const HeroTextEdit = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put("https://paharpur-backend-adminpanel.onrender.com/api/hero-text", {
+      await axios.put("https://paharpur-bend.onrender.com/api/hero-text", {
         heroText,
         heroDescription,
       });

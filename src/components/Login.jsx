@@ -33,7 +33,7 @@ const Login = () => {
 
         try {
             const response = await axios.post(
-                'https://paharpur-backend-adminpanel.onrender.com/api/auth/login',
+                'https://paharpur-bend.onrender.com/api/auth/login',
                 credentials,
                 {
                     withCredentials: true,

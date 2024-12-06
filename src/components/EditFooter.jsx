@@ -15,7 +15,7 @@ const EditFooter = () => {
 
   const fetchFooterSections = async () => {
     try {
-      const response = await axios.get("https://paharpur-backend-adminpanel.onrender.com/api/footer");
+      const response = await axios.get("https://paharpur-bend.onrender.com/api/footer");
       if (Array.isArray(response.data)) {
         setFooterSections(response.data);
       } else {
@@ -32,7 +32,7 @@ const EditFooter = () => {
     if (!newSection.title) return;
     try {
       const response = await axios.post(
-        "https://paharpur-backend-adminpanel.onrender.com/api/footer",
+        "https://paharpur-bend.onrender.com/api/footer",
         newSection
       );
       setFooterSections([...footerSections, response.data.footer]);
@@ -46,7 +46,7 @@ const EditFooter = () => {
     if (!selectedSection || !newSubitem.name || !newSubitem.url) return;
     try {
       const response = await axios.post(
-        `https://paharpur-backend-adminpanel.onrender.com/api/footer/${selectedSection}/subitem`,
+        `https://paharpur-bend.onrender.com/api/footer/${selectedSection}/subitem`,
         newSubitem
       );
       setFooterSections((prev) =>
@@ -64,7 +64,7 @@ const EditFooter = () => {
     if (!selectedSection || !editedData.name || !editedData.url) return;
     try {
       const response = await axios.put(
-        `https://paharpur-backend-adminpanel.onrender.com/api/footer/${selectedSection}/subitem/${subitemId}`,
+        `https://paharpur-bend.onrender.com/api/footer/${selectedSection}/subitem/${subitemId}`,
         editedData
       );
       setFooterSections((prev) =>
@@ -83,7 +83,7 @@ const EditFooter = () => {
     if (!selectedSection) return;
     try {
       const response = await axios.delete(
-        `https://paharpur-backend-adminpanel.onrender.com/api/footer/${selectedSection}/subitem/${subitemId}`
+        `https://paharpur-bend.onrender.com/api/footer/${selectedSection}/subitem/${subitemId}`
       );
       setFooterSections((prev) =>
         prev.map((section) =>

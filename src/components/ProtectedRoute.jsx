@@ -9,7 +9,7 @@ const ProtectedRoute = ({ children }) => {
     useEffect(() => {
         const checkAuth = async () => {
             try {
-                const response = await axios.get('https://paharpur-backend-adminpanel.onrender.com/api/auth/check-auth', {
+                const response = await axios.get('https://paharpur-bend.onrender.com/api/auth/check-auth', {
                     withCredentials: true
                 });
                 setIsAuthenticated(response.data.authenticated);

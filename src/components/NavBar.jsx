@@ -14,7 +14,7 @@ const NavBar = () => {
             localStorage.clear();
             
             // Make the API call to logout
-            fetch('https://paharpur-backend-adminpanel.onrender.com/api/auth/logout', {
+            fetch('https://paharpur-bend.onrender.com/api/auth/logout', {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
