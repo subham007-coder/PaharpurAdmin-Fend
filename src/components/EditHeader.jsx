@@ -130,7 +130,7 @@ const EditHeader = () => {
             type="text"
             value={newNavigationLink}
             onChange={handleNavigationLinkChange}
-            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md"
+            className="mt-1 block w-full px-4 py-2 text-black border-gray-200 rounded-md"
             placeholder="Add new navigation link"
           />
           <button
