@@ -10,23 +10,25 @@ const AdminAccounts = () => {
         const fetchAdmins = async () => {
             try {
                 const response = await fetch('https://paharpur-backend-adminpanel.onrender.com/api/auth/admins', {
-                    credentials: 'include'
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
                 });
-                const data = await response.json();
-                
-                if (response.ok) {
-                    setAdmins(data.admins);
-                    // Get current user from localStorage
-                    const user = JSON.parse(localStorage.getItem('user'));
-                    setCurrentUser(user);
-                } else {
-                    setError('Failed to fetch admin accounts');
+        
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Failed to fetch admins');
                 }
+        
+                const data = await response.json();
+                return data;
+        
             } catch (error) {
-                setError('Error fetching admin accounts');
-                console.error('Error:', error);
-            } finally {
-                setLoading(false);
+                console.error('Error fetching admins:', error);
+                throw error;
             }
         };
 
