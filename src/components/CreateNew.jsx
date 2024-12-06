@@ -43,7 +43,7 @@ const CreateNew = ({ onSave, onClose }) => {
 
     try {
       // Send a POST request to create a new initiative
-      await axios.post("http://localhost:5000/api/initiatives", initiative);
+      await axios.post("https://paharpur-backend-adminpanel.onrender.com/api/initiatives", initiative);
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000); // Reset success message after 3 seconds
       onSave(); // Callback to refresh the parent component

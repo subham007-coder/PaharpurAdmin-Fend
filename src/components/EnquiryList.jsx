@@ -12,7 +12,7 @@ const EnquiryList = () => {
 
     const fetchEnquiries = async () => {
         try {
-            const response = await axios.get('http://localhost:5000/api/enquiries', {
+            const response = await axios.get('https://paharpur-backend-adminpanel.onrender.com/api/enquiries', {
                 withCredentials: true
             });
             setEnquiries(response.data.enquiries);
@@ -26,7 +26,7 @@ const EnquiryList = () => {
 
     const handleStatusUpdate = async (id, newStatus) => {
         try {
-            await axios.put(`http://localhost:5000/api/enquiries/${id}/status`, 
+            await axios.put(`https://paharpur-backend-adminpanel.onrender.com/api/enquiries/${id}/status`, 
                 { status: newStatus },
                 { withCredentials: true }
             );
@@ -40,7 +40,7 @@ const EnquiryList = () => {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this enquiry?')) {
             try {
-                await axios.delete(`http://localhost:5000/api/enquiries/${id}`, {
+                await axios.delete(`https://paharpur-backend-adminpanel.onrender.com/api/enquiries/${id}`, {
                     withCredentials: true
                 });
                 fetchEnquiries();

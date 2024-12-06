@@ -4,19 +4,18 @@ import axios from "axios";
 const EditFooter = () => {
   const [footerSections, setFooterSections] = useState([]);
   const [selectedSection, setSelectedSection] = useState(null);
-  const [newSection, setNewSection] = useState({ title: "", links: [] }); // New main section
-  const [newSubitem, setNewSubitem] = useState({ name: "", url: "" }); // New subitem
-  const [editingSubitem, setEditingSubitem] = useState(null); // To track which subitem is being edited
-  const [editedData, setEditedData] = useState({ name: "", url: "" }); // To store edited data
+  const [newSection, setNewSection] = useState({ title: "", links: [] });
+  const [newSubitem, setNewSubitem] = useState({ name: "", url: "" });
+  const [editingSubitem, setEditingSubitem] = useState(null);
+  const [editedData, setEditedData] = useState({ name: "", url: "" });
 
-  // Fetch footer sections on load
   useEffect(() => {
     fetchFooterSections();
   }, []);
 
   const fetchFooterSections = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/footer");
+      const response = await axios.get("https://paharpur-backend-adminpanel.onrender.com/api/footer");
       if (Array.isArray(response.data)) {
         setFooterSections(response.data);
       } else {
@@ -29,27 +28,25 @@ const EditFooter = () => {
     }
   };
 
-  // Handle adding a new section
   const handleAddSection = async () => {
-    if (!newSection.title) return; // Make sure there's a title
+    if (!newSection.title) return;
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/footer",
+        "https://paharpur-backend-adminpanel.onrender.com/api/footer",
         newSection
       );
-      setFooterSections([...footerSections, response.data.footer]); // Add the new section to the list
-      setNewSection({ title: "", links: [] }); // Clear the new section input
+      setFooterSections([...footerSections, response.data.footer]);
+      setNewSection({ title: "", links: [] });
     } catch (error) {
       console.error("Error adding section:", error);
     }
   };
 
-  // Handle adding a subitem under the selected section
   const handleAddSubitem = async () => {
     if (!selectedSection || !newSubitem.name || !newSubitem.url) return;
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/footer/${selectedSection}/subitem`,
+        `https://paharpur-backend-adminpanel.onrender.com/api/footer/${selectedSection}/subitem`,
         newSubitem
       );
       setFooterSections((prev) =>
@@ -57,7 +54,7 @@ const EditFooter = () => {
           section._id === selectedSection ? response.data.footer : section
         )
       );
-      setNewSubitem({ name: "", url: "" }); // Clear the input fields
+      setNewSubitem({ name: "", url: "" });
     } catch (error) {
       console.error("Error adding subitem:", error);
     }
@@ -67,7 +64,7 @@ const EditFooter = () => {
     if (!selectedSection || !editedData.name || !editedData.url) return;
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/footer/${selectedSection}/subitem/${subitemId}`,
+        `https://paharpur-backend-adminpanel.onrender.com/api/footer/${selectedSection}/subitem/${subitemId}`,
         editedData
       );
       setFooterSections((prev) =>
@@ -75,8 +72,8 @@ const EditFooter = () => {
           section._id === selectedSection ? response.data.footer : section
         )
       );
-      setEditingSubitem(null); // Reset editing state after update
-      setEditedData({ name: "", url: "" }); // Clear the edited data
+      setEditingSubitem(null);
+      setEditedData({ name: "", url: "" });
     } catch (error) {
       console.error("Error updating subitem:", error);
     }
@@ -86,7 +83,7 @@ const EditFooter = () => {
     if (!selectedSection) return;
     try {
       const response = await axios.delete(
-        `http://localhost:5000/api/footer/${selectedSection}/subitem/${subitemId}`
+        `https://paharpur-backend-adminpanel.onrender.com/api/footer/${selectedSection}/subitem/${subitemId}`
       );
       setFooterSections((prev) =>
         prev.map((section) =>
