@@ -4,49 +4,76 @@ import { useNavigate } from 'react-router-dom';
 
 const AdminAccounts = () => {
     const [admins, setAdmins] = useState([]);
+    const [currentUser, setCurrentUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
-    useEffect(() => {
-        // Configure axios defaults
-        axios.defaults.withCredentials = true;
-        
-        const fetchAdmins = async () => {
-            try {
-                const response = await axios.get('https://paharpur-backend-adminpanel.onrender.com/api/auth/admins', {
+    const fetchCurrentUser = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            
+            const response = await axios.get(
+                'https://paharpur-backend-adminpanel.onrender.com/api/auth/current-user',
+                {
                     withCredentials: true,
                     headers: {
                         'Content-Type': 'application/json',
-                        'Accept': 'application/json'
+                        'Authorization': token ? `Bearer ${token}` : ''
                     }
-                });
+                }
+            );
 
-                // Log the response to see the data structure
-                console.log('Admin Response:', response.data);
+            if (response.data.success) {
+                return response.data.user;
+            }
+        } catch (error) {
+            console.error('Error fetching current user:', error);
+            if (error.response?.status === 401) {
+                navigate('/login');
+            }
+            throw error;
+        }
+    };
 
-                // Check if response.data.admins exists, otherwise use response.data
-                const adminData = response.data.admins || response.data;
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                // Get token from localStorage
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    throw new Error('No token found');
+                }
+
+                // First fetch the current logged-in user
+                const currentUserData = await fetchCurrentUser();
+                setCurrentUser(currentUserData);
+
+                // Then fetch all admins
+                const adminsResponse = await axios.get(
+                    'https://paharpur-backend-adminpanel.onrender.com/api/auth/admins',
+                    {
+                        withCredentials: true,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        }
+                    }
+                );
+
+                const adminData = adminsResponse.data.admins || adminsResponse.data;
                 
-                // Ensure adminData is an array and has required fields
                 if (Array.isArray(adminData)) {
-                    // Map and validate each admin object
-                    const validatedAdmins = adminData.map(admin => ({
-                        _id: admin._id || 'N/A',
-                        name: admin.name || 'No Name',
-                        email: admin.email || 'No Email',
-                        role: admin.role || 'Admin'
-                    }));
-                    setAdmins(validatedAdmins);
-                    console.log('Validated Admins:', validatedAdmins);
+                    setAdmins(adminData);
                 } else {
                     console.error('Admin data is not an array:', adminData);
                     setAdmins([]);
                 }
                 setError(null);
             } catch (error) {
-                console.error('Error fetching admins:', error);
-                if (error.response?.status === 401) {
+                console.error('Error fetching data:', error);
+                if (error.response?.status === 401 || error.message === 'No token found') {
                     setError('Please login to view admin accounts');
                     navigate('/login');
                 } else {
@@ -57,25 +84,11 @@ const AdminAccounts = () => {
             }
         };
 
-        fetchAdmins();
+        fetchData();
     }, [navigate]);
 
-    if (loading) {
-        return (
-            <div className="flex justify-center items-center h-full">
-                <div className="text-white">Loading...</div>
-            </div>
-        );
-    }
-
-    if (error) {
-        return (
-            <div className="text-red-500 p-4">
-                {error}
-            </div>
-        );
-    }
-
+    if (loading) return <div className="flex justify-center items-center h-full"><div className="text-white">Loading...</div></div>;
+    if (error) return <div className="text-red-500 p-4">{error}</div>;
     if (!admins || admins.length === 0) {
         return (
             <div className="p-6">
@@ -94,14 +107,23 @@ const AdminAccounts = () => {
                         <div className="flex justify-between items-start">
                             <div>
                                 <p className="text-white">
-                                    <span className="font-semibold">Name:</span> {admin.name || 'No Name'}
+                                    <span className="font-semibold">Username:</span> {admin.username}
                                 </p>
+                                {/* Only show email for the current logged-in user */}
+                                {currentUser && currentUser._id === admin._id && (
+                                    <p className="text-white">
+                                        <span className="font-semibold">Email:</span> {admin.email}
+                                    </p>
+                                )}
                                 <p className="text-white">
-                                    <span className="font-semibold">Email:</span> {admin.email || 'No Email'}
+                                    <span className="font-semibold">Role:</span> {admin.role}
                                 </p>
-                                <p className="text-white">
-                                    <span className="font-semibold">Role:</span> {admin.role || 'Admin'}
-                                </p>
+                                {/* Indicate if this is the current user */}
+                                {currentUser && currentUser._id === admin._id && (
+                                    <p className="text-green-500 mt-2 text-sm">
+                                        (Current User)
+                                    </p>
+                                )}
                             </div>
                         </div>
                     </div>
