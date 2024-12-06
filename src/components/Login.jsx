@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import axios from 'axios';
 
 const Login = () => {
     const navigate = useNavigate();
@@ -14,34 +15,23 @@ const Login = () => {
         setError('');
 
         try {
-            console.log('Sending login request with:', formData);
-
-            const response = await fetch('https://paharpur-backend-adminpanel.onrender.com/api/auth/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-                body: JSON.stringify(formData)
-            });
-
-            console.log('Response status:', response.status);
-            const data = await response.json();
-            console.log('Response data:', data);
-
-            if (response.ok && data.success) {
-                localStorage.setItem('isAuthenticated', 'true');
-                if (data.user) {
-                    localStorage.setItem('user', JSON.stringify(data.user));
+            const response = await axios.post(
+                'https://paharpur-backend-adminpanel.onrender.com/api/auth/login',
+                formData,
+                {
+                    withCredentials: true,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
                 }
-                console.log('Authentication stored in localStorage');
-                navigate('/edit-header');
-            } else {
-                setError(data.message || 'Invalid email or password');
+            );
+
+            if (response.data.success) {
+                localStorage.setItem('isAuthenticated', 'true');
+                navigate('/enquiries');
             }
         } catch (error) {
-            console.error('Login error:', error);
-            setError('Network error. Please try again.');
+            setError(error.response?.data?.message || 'Login failed');
         }
     };
 

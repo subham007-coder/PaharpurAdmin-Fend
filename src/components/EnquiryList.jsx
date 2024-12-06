@@ -8,49 +8,37 @@ const EnquiryList = () => {
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
-    // Configure axios defaults
     useEffect(() => {
+        // Configure axios defaults
         axios.defaults.withCredentials = true;
-    }, []);
+        
+        const fetchEnquiries = async () => {
+            try {
+                const response = await axios.get('https://paharpur-backend-adminpanel.onrender.com/api/enquiries', {
+                    withCredentials: true,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                });
 
-    const fetchEnquiries = async () => {
-        try {
-            // First check if user is authenticated
-            const authCheck = await axios.get('https://paharpur-backend-adminpanel.onrender.com/api/auth/check-auth', {
-                withCredentials: true
-            });
-
-            if (!authCheck.data.authenticated) {
-                throw new Error('Not authenticated');
-            }
-
-            // Then fetch enquiries
-            const response = await axios.get('https://paharpur-backend-adminpanel.onrender.com/api/enquiries', {
-                withCredentials: true,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
+                setEnquiries(response.data.enquiries);
+                setError(null);
+            } catch (error) {
+                console.error('Error:', error);
+                if (error.response?.status === 401) {
+                    setError('Please login to view enquiries');
+                    navigate('/login');
+                } else {
+                    setError('Failed to fetch enquiries');
                 }
-            });
-
-            setEnquiries(response.data.enquiries);
-            setError(null);
-        } catch (error) {
-            console.error('Error:', error);
-            if (error.response?.status === 401) {
-                setError('Please login to view enquiries');
-                navigate('/login');
-            } else {
-                setError('Failed to fetch enquiries');
+            } finally {
+                setLoading(false);
             }
-        } finally {
-            setLoading(false);
-        }
-    };
+        };
 
-    useEffect(() => {
         fetchEnquiries();
-    }, []);
+    }, [navigate]);
 
     const handleStatusUpdate = async (id, newStatus) => {
         try {
