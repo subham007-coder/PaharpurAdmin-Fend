@@ -1,52 +1,102 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const EnquiryList = () => {
     const [enquiries, setEnquiries] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
+    // Configure axios defaults
     useEffect(() => {
-        fetchEnquiries();
+        axios.defaults.withCredentials = true;
     }, []);
 
     const fetchEnquiries = async () => {
         try {
-            const response = await axios.get('https://paharpur-backend-adminpanel.onrender.com/api/enquiries', {
+            // First check if user is authenticated
+            const authCheck = await axios.get('https://paharpur-backend-adminpanel.onrender.com/api/auth/check-auth', {
                 withCredentials: true
             });
+
+            if (!authCheck.data.authenticated) {
+                throw new Error('Not authenticated');
+            }
+
+            // Then fetch enquiries
+            const response = await axios.get('https://paharpur-backend-adminpanel.onrender.com/api/enquiries', {
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            });
+
             setEnquiries(response.data.enquiries);
+            setError(null);
         } catch (error) {
-            setError('Failed to fetch enquiries');
             console.error('Error:', error);
+            if (error.response?.status === 401) {
+                setError('Please login to view enquiries');
+                navigate('/login');
+            } else {
+                setError('Failed to fetch enquiries');
+            }
         } finally {
             setLoading(false);
         }
     };
 
+    useEffect(() => {
+        fetchEnquiries();
+    }, []);
+
     const handleStatusUpdate = async (id, newStatus) => {
         try {
-            await axios.put(`https://paharpur-backend-adminpanel.onrender.com/api/enquiries/${id}/status`, 
+            await axios.put(
+                `https://paharpur-backend-adminpanel.onrender.com/api/enquiries/${id}/status`,
                 { status: newStatus },
-                { withCredentials: true }
+                {
+                    withCredentials: true,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }
             );
             fetchEnquiries();
         } catch (error) {
             console.error('Error updating status:', error);
-            alert('Failed to update status');
+            if (error.response?.status === 401) {
+                setError('Please login to update status');
+                navigate('/login');
+            } else {
+                alert('Failed to update status');
+            }
         }
     };
 
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this enquiry?')) {
             try {
-                await axios.delete(`https://paharpur-backend-adminpanel.onrender.com/api/enquiries/${id}`, {
-                    withCredentials: true
-                });
+                await axios.delete(
+                    `https://paharpur-backend-adminpanel.onrender.com/api/enquiries/${id}`,
+                    {
+                        withCredentials: true,
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
                 fetchEnquiries();
             } catch (error) {
                 console.error('Error deleting enquiry:', error);
-                alert('Failed to delete enquiry');
+                if (error.response?.status === 401) {
+                    setError('Please login to delete enquiries');
+                    navigate('/login');
+                } else {
+                    alert('Failed to delete enquiry');
+                }
             }
         }
     };
@@ -60,7 +110,11 @@ const EnquiryList = () => {
     }
 
     if (error) {
-        return <div className="text-red-500 p-4">{error}</div>;
+        return (
+            <div className="text-red-500 p-4">
+                {error}
+            </div>
+        );
     }
 
     return (
@@ -68,16 +122,17 @@ const EnquiryList = () => {
             <h2 className="text-2xl font-bold mb-6 text-white">Enquiries</h2>
             <div className="grid gap-4">
                 {enquiries.map((enquiry) => (
-                    <div key={enquiry._id} className="bg-slate-800 p-4 rounded-lg shadow">
+                    <div key={enquiry._id} className="bg-slate-800 p-4 rounded-lg">
                         <div className="flex justify-between items-start">
-                            <div className="text-white">
-                                <h3 className="font-bold text-lg">{enquiry.subject}</h3>
-                                <p className="text-gray-300">From: {enquiry.name}</p>
-                                <p className="text-gray-300">Email: {enquiry.email}</p>
-                                <p className="text-gray-300">Phone: {enquiry.phone}</p>
-                                <p className="mt-2 text-gray-200">{enquiry.message}</p>
-                                <p className="text-sm text-gray-400 mt-2">
-                                    {new Date(enquiry.createdAt).toLocaleString()}
+                            <div>
+                                <p className="text-white">
+                                    <span className="font-semibold">Name:</span> {enquiry.name}
+                                </p>
+                                <p className="text-white">
+                                    <span className="font-semibold">Email:</span> {enquiry.email}
+                                </p>
+                                <p className="text-white">
+                                    <span className="font-semibold">Message:</span> {enquiry.message}
                                 </p>
                                 <div className={`mt-2 inline-block px-2 py-1 rounded text-sm ${
                                     enquiry.status === 'completed' ? 'bg-green-500' :
