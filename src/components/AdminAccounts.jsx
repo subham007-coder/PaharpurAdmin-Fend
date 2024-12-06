@@ -22,10 +22,17 @@ const AdminAccounts = () => {
                     }
                 });
 
-                if (response.data) {
-                    setAdmins(response.data);
-                    setError(null);
+                // Check if response.data.admins exists, otherwise use response.data
+                const adminData = response.data.admins || response.data;
+                
+                // Ensure adminData is an array
+                if (Array.isArray(adminData)) {
+                    setAdmins(adminData);
+                } else {
+                    console.error('Admin data is not an array:', adminData);
+                    setAdmins([]);
                 }
+                setError(null);
             } catch (error) {
                 console.error('Error fetching admins:', error);
                 if (error.response?.status === 401) {
@@ -54,6 +61,16 @@ const AdminAccounts = () => {
         return (
             <div className="text-red-500 p-4">
                 {error}
+            </div>
+        );
+    }
+
+    // Check if admins is empty
+    if (!admins || admins.length === 0) {
+        return (
+            <div className="p-6">
+                <h2 className="text-2xl font-bold mb-6 text-white">Admin Accounts</h2>
+                <p className="text-white">No admin accounts found.</p>
             </div>
         );
     }
