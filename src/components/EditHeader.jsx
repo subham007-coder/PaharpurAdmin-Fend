@@ -45,11 +45,13 @@ const EditHeader = () => {
   };
 
   const handleAddNavigationLink = () => {
-    setHeaderData({
-      ...headerData,
-      navigationLinks: [...headerData.navigationLinks, newNavigationLink],
-    });
-    setNewNavigationLink(""); // Reset the input field
+    if (newNavigationLink.trim() !== "") {
+      setHeaderData({
+        ...headerData,
+        navigationLinks: [...headerData.navigationLinks, newNavigationLink],
+      });
+      setNewNavigationLink(""); // Reset the input field
+    }
   };
 
   const handleSubmit = async (e) => {

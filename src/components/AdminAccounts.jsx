@@ -18,7 +18,7 @@ const AdminAccounts = () => {
                 }
 
                 const response = await axios.get(
-                    'http://localhost:5000/api/auth/admins',
+                    'http://147.79.66.243:5000/api/auth/admins',
                     {
                         headers: {
                             'Authorization': `Bearer ${token}`

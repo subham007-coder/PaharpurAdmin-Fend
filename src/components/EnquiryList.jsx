@@ -14,7 +14,7 @@ const EnquiryList = () => {
         
         const fetchEnquiries = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/enquiries', {
+                const response = await axios.get('http://147.79.66.243:5000/api/enquiries', {
                     withCredentials: true,
                     headers: {
                         'Content-Type': 'application/json',

@@ -12,7 +12,7 @@ const NavBar = () => {
             console.log('Logging out...');
 
             // Make the API call to logout
-            const response = await fetch('http://localhost:5000/api/auth/logout', {
+            const response = await fetch('http://147.79.66.243:5000/api/auth/logout', {
                 method: 'POST',
                 credentials: 'include', // Include cookies in the request
                 headers: {
