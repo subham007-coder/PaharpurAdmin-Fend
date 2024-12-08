@@ -22,7 +22,7 @@ const ModalEdit = ({ onClose, onSave }) => {
     // Fetch all initiatives from the backend
     const fetchInitiatives = async () => {
       try {
-        const response = await axios.get("http://147.79.66.243:5000/api/initiatives");
+        const response = await axios.get("https://api.adsu.shop/api/initiatives");
         setInitiatives(response.data);
         console.log("Fetched initiatives:", response.data); // Log the fetched data
       } catch (err) {
@@ -80,7 +80,7 @@ const ModalEdit = ({ onClose, onSave }) => {
 
     try {
       await axios.put(
-        `http://147.79.66.243:5000/api/initiatives/${initiativeId}`,
+        `https://api.adsu.shop/api/initiatives/${initiativeId}`,
         initiative
       );
       setSuccess(true);

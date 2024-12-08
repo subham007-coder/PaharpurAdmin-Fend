@@ -15,7 +15,7 @@ const EditFooter = () => {
 
   const fetchFooterSections = async () => {
     try {
-      const response = await axios.get("http://147.79.66.243:5000/api/footer");
+      const response = await axios.get("https://api.adsu.shop/api/footer");
       if (Array.isArray(response.data)) {
         setFooterSections(response.data);
       } else {
@@ -32,7 +32,7 @@ const EditFooter = () => {
     if (!newSection.title) return;
     try {
       const response = await axios.post(
-        "http://147.79.66.243:5000/api/footer",
+        "https://api.adsu.shop/api/footer",
         newSection
       );
       setFooterSections([...footerSections, response.data.footer]);
@@ -46,7 +46,7 @@ const EditFooter = () => {
     if (!selectedSection || !newSubitem.name || !newSubitem.url) return;
     try {
       const response = await axios.post(
-        `http://147.79.66.243:5000/api/footer/${selectedSection}/subitem`,
+        `https://api.adsu.shop/api/footer/${selectedSection}/subitem`,
         newSubitem
       );
       setFooterSections((prev) =>
@@ -64,7 +64,7 @@ const EditFooter = () => {
     if (!selectedSection || !editedData.name || !editedData.url) return;
     try {
       const response = await axios.put(
-        `http://147.79.66.243:5000/api/footer/${selectedSection}/subitem/${subitemId}`,
+        `https://api.adsu.shop/api/footer/${selectedSection}/subitem/${subitemId}`,
         editedData
       );
       setFooterSections((prev) =>
@@ -83,7 +83,7 @@ const EditFooter = () => {
     if (!selectedSection) return;
     try {
       const response = await axios.delete(
-        `http://147.79.66.243:5000/api/footer/${selectedSection}/subitem/${subitemId}`
+        `https://api.adsu.shop/api/footer/${selectedSection}/subitem/${subitemId}`
       );
       setFooterSections((prev) =>
         prev.map((section) =>

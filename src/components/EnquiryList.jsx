@@ -14,7 +14,7 @@ const EnquiryList = () => {
         
         const fetchEnquiries = async () => {
             try {
-                const response = await axios.get('http://147.79.66.243:5000/api/enquiries', {
+                const response = await axios.get('https://api.adsu.shop/api/enquiries', {
                     withCredentials: true,
                     headers: {
                         'Content-Type': 'application/json',
@@ -43,7 +43,7 @@ const EnquiryList = () => {
     const handleStatusUpdate = async (id, newStatus) => {
         try {
             await axios.put(
-                `http://147.79.66.243:5000/api/enquiries/${id}/status`,
+                `https://api.adsu.shop/api/enquiries/${id}/status`,
                 { status: newStatus },
                 {
                     withCredentials: true,
@@ -68,7 +68,7 @@ const EnquiryList = () => {
         if (window.confirm('Are you sure you want to delete this enquiry?')) {
             try {
                 await axios.delete(
-                    `http://147.79.66.243:5000/api/enquiries/${id}`,
+                    `https://api.adsu.shop/api/enquiries/${id}`,
                     {
                         withCredentials: true,
                         headers: {

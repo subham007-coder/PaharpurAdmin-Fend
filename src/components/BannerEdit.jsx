@@ -12,7 +12,7 @@ const BannerEdit = () => {
   useEffect(() => {
     const fetchBannerData = async () => {
       try {
-        const response = await axios.get("http://147.79.66.243:5000/api/banner");
+        const response = await axios.get("https://api.adsu.shop/api/banner");
         setBannerData(response.data);
         setNewBanner(response.data); // Pre-fill form with existing data
       } catch (err) {
@@ -32,11 +32,11 @@ const BannerEdit = () => {
     try {
       if (bannerData) {
         // Update existing banner
-        const response = await axios.put("http://147.79.66.243:5000/api/banner", newBanner);
+        const response = await axios.put("https://api.adsu.shop/api/banner", newBanner);
         setBannerData(response.data);
       } else {
         // Add a new banner
-        const response = await axios.post("http://147.79.66.243:5000/api/banner/create", newBanner);
+        const response = await axios.post("https://api.adsu.shop/api/banner/create", newBanner);
         setBannerData(response.data);
       }
       setSuccess("Banner saved successfully!");

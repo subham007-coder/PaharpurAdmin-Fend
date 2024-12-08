@@ -58,7 +58,7 @@ const Register = () => {
         }
 
         try {
-            const response = await fetch('http://147.79.66.243:5000/api/auth/register', {
+            const response = await fetch('https://api.adsu.shop/api/auth/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

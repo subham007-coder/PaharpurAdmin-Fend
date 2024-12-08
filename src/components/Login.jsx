@@ -33,7 +33,7 @@ const Login = () => {
 
         try {
             const response = await axios.post(
-                'http://147.79.66.243:5000/api/auth/login',
+                'https://api.adsu.shop/api/auth/login',
                 credentials,
                 {
                     withCredentials: true,  // Ensure cookies are included with request
