@@ -13,11 +13,11 @@ const Login = () => {
 
     // Check if user is already logged in
     useEffect(() => {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('token');  // Check if token is in localStorage
         if (token) {
-            navigate('/admin-accounts');
+            navigate('/edit-header', { replace: true });  // Navigate if token is found
         }
-    }, [navigate]);
+    }, [navigate]);  // Only run this effect once, on mount
 
     const handleChange = (e) => {
         setCredentials({
@@ -33,10 +33,10 @@ const Login = () => {
 
         try {
             const response = await axios.post(
-                'https://paharpur-bend.onrender.com/api/auth/login',
+                'http://localhost:5000/api/auth/login',
                 credentials,
                 {
-                    withCredentials: true,
+                    withCredentials: true,  // Ensure cookies are included with request
                     headers: {
                         'Content-Type': 'application/json',
                         'Accept': 'application/json'
@@ -45,14 +45,13 @@ const Login = () => {
             );
 
             if (response.data.success) {
-                // Store token and user data
-                localStorage.setItem('token', response.data.token);
+                // No need to store the token in localStorage as cookies will handle it
+                // If you want, you can store user data in localStorage or context
                 localStorage.setItem('user', JSON.stringify(response.data.user));
+                localStorage.setItem('token', response.data.token);  // Store the token
                 
-                // Set default axios header
-                axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
-                
-                navigate('/admin-accounts');
+                // Navigate to the admin dashboard or the next page
+                navigate('/edit-header');
             } else {
                 setError(response.data.message || 'Login failed. Please try again.');
             }
@@ -127,11 +126,7 @@ const Login = () => {
                     <button
                         type="submit"
                         disabled={loading}
-                        className={`w-full py-2 px-4 rounded ${
-                            loading 
-                                ? 'bg-blue-400 cursor-not-allowed' 
-                                : 'bg-blue-500 hover:bg-blue-600'
-                        } text-white font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
+                        className={`w-full py-2 px-4 rounded ${loading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'} text-white font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
                     >
                         {loading ? (
                             <span className="flex items-center justify-center">
@@ -151,4 +146,4 @@ const Login = () => {
     );
 };
 
-export default Login; 
+export default Login;

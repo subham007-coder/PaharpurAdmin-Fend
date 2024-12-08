@@ -14,7 +14,7 @@ const EnquiryList = () => {
         
         const fetchEnquiries = async () => {
             try {
-                const response = await axios.get('https://paharpur-bend.onrender.com/api/enquiries', {
+                const response = await axios.get('http://localhost:5000/api/enquiries', {
                     withCredentials: true,
                     headers: {
                         'Content-Type': 'application/json',
@@ -43,7 +43,7 @@ const EnquiryList = () => {
     const handleStatusUpdate = async (id, newStatus) => {
         try {
             await axios.put(
-                `https://paharpur-bend.onrender.com/api/enquiries/${id}/status`,
+                `http://147.79.66.243:5000/api/enquiries/${id}/status`,
                 { status: newStatus },
                 {
                     withCredentials: true,
@@ -68,7 +68,7 @@ const EnquiryList = () => {
         if (window.confirm('Are you sure you want to delete this enquiry?')) {
             try {
                 await axios.delete(
-                    `https://paharpur-bend.onrender.com/api/enquiries/${id}`,
+                    `http://147.79.66.243:5000/api/enquiries/${id}`,
                     {
                         withCredentials: true,
                         headers: {

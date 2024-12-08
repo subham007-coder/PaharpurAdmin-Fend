@@ -1,10 +1,5 @@
-import React from 'react';
-import { 
-    BrowserRouter, 
-    Routes, 
-    Route, 
-    Navigate
-} from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import NavBar from './components/NavBar';
 import EditHeader from './components/EditHeader';
 import BannerEdit from './components/BannerEdit';
@@ -29,6 +24,16 @@ const DashboardLayout = ({ children }) => (
 );
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    // Check for authentication status (e.g., from localStorage or a token)
+    const token = localStorage.getItem('token');
+    if (token) {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
   const handleSave = () => {
     console.log("Data saved successfully!");
   };
@@ -42,7 +47,7 @@ function App() {
         
         {/* Protected Routes */}
         <Route path="/" element={
-          <ProtectedRoute>
+          <ProtectedRoute isAuthenticated={isAuthenticated}>
             <DashboardLayout>
               <Navigate to="/edit-header" replace />
             </DashboardLayout>
@@ -50,7 +55,7 @@ function App() {
         } />
 
         <Route path="/edit-header" element={
-          <ProtectedRoute>
+          <ProtectedRoute isAuthenticated={isAuthenticated}>
             <DashboardLayout>
               <EditHeader />
             </DashboardLayout>
@@ -58,23 +63,23 @@ function App() {
         } />
 
         <Route path="/banner-edit" element={
-          <ProtectedRoute>
+          <ProtectedRoute isAuthenticated={isAuthenticated}>
             <DashboardLayout>
               <BannerEdit />
             </DashboardLayout>
           </ProtectedRoute>
         } />
 
-        <Route path="/Hero-Text-edit" element={
-          <ProtectedRoute>
+        <Route path="/hero-text-edit" element={
+          <ProtectedRoute isAuthenticated={isAuthenticated}>
             <DashboardLayout>
               <HeroTextEdit />
             </DashboardLayout>
           </ProtectedRoute>
         } />
 
-        <Route path="/Edit-modal" element={
-          <ProtectedRoute>
+        <Route path="/edit-modal" element={
+          <ProtectedRoute isAuthenticated={isAuthenticated}>
             <DashboardLayout>
               <ModalEdit onSave={handleSave} />
             </DashboardLayout>
@@ -82,7 +87,7 @@ function App() {
         } />
 
         <Route path="/create-new" element={
-          <ProtectedRoute>
+          <ProtectedRoute isAuthenticated={isAuthenticated}>
             <DashboardLayout>
               <CreateNew onSave={handleSave} onClose={() => {}} />
             </DashboardLayout>
@@ -90,7 +95,7 @@ function App() {
         } />
 
         <Route path="/edit-footer" element={
-          <ProtectedRoute>
+          <ProtectedRoute isAuthenticated={isAuthenticated}>
             <DashboardLayout>
               <EditFooter />
             </DashboardLayout>
@@ -98,7 +103,7 @@ function App() {
         } />
 
         <Route path="/admin-accounts" element={
-          <ProtectedRoute>
+          <ProtectedRoute isAuthenticated={isAuthenticated}>
             <DashboardLayout>
               <AdminAccounts />
             </DashboardLayout>
@@ -106,7 +111,7 @@ function App() {
         } />
 
         <Route path="/enquiries" element={
-          <ProtectedRoute>
+          <ProtectedRoute isAuthenticated={isAuthenticated}>
             <DashboardLayout>
               <EnquiryList />
             </DashboardLayout>

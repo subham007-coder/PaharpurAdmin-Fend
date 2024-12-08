@@ -13,7 +13,7 @@ const EditHeader = () => {
     // Fetch the current header data to populate the form
     const fetchHeaderData = async () => {
       try {
-        const response = await axios.get("https://paharpur-bend.onrender.com/api/header");
+        const response = await axios.get("http://147.79.66.243:5000/api/header");
         setHeaderData(response.data);
       } catch (error) {
         console.error("Error fetching header data:", error);
@@ -55,7 +55,7 @@ const EditHeader = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("https://paharpur-bend.onrender.com/api/header/update", headerData);
+      const response = await axios.post("http://147.79.66.243:5000/api/header/update", headerData);
       console.log("Header updated:", response.data);
     } catch (error) {
       console.error("Error updating header:", error);

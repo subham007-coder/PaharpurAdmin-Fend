@@ -18,7 +18,7 @@ const AdminAccounts = () => {
                 }
 
                 const response = await axios.get(
-                    'https://paharpur-bend.onrender.com/api/auth/admins',
+                    'http://localhost:5000/api/auth/admins',
                     {
                         headers: {
                             'Authorization': `Bearer ${token}`
