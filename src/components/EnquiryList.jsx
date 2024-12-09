@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import api from '../api/axios'; // Import the configured api instance
 
 const EnquiryList = () => {
     const [enquiries, setEnquiries] = useState([]);
@@ -8,50 +8,31 @@ const EnquiryList = () => {
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
-    useEffect(() => {
-        // Configure axios defaults
-        axios.defaults.withCredentials = true;
-        
-        const fetchEnquiries = async () => {
-            try {
-                const response = await axios.get('https://api.adsu.shop/api/enquiries', {
-                    withCredentials: true,
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    }
-                });
-
-                setEnquiries(response.data.enquiries);
-                setError(null);
-            } catch (error) {
-                console.error('Error:', error);
-                if (error.response?.status === 401) {
-                    setError('Please login to view enquiries');
-                    navigate('/login');
-                } else {
-                    setError('Failed to fetch enquiries');
-                }
-            } finally {
-                setLoading(false);
+    const fetchEnquiries = async () => {
+        try {
+            const response = await api.get('/api/enquiries');
+            setEnquiries(response.data.enquiries);
+            setError(null);
+        } catch (error) {
+            console.error('Error:', error);
+            if (error.response?.status === 401) {
+                setError('Please login to view enquiries');
+                navigate('/login');
+            } else {
+                setError('Failed to fetch enquiries');
             }
-        };
+        } finally {
+            setLoading(false);
+        }
+    };
 
+    useEffect(() => {
         fetchEnquiries();
     }, [navigate]);
 
     const handleStatusUpdate = async (id, newStatus) => {
         try {
-            await axios.put(
-                `https://api.adsu.shop/api/enquiries/${id}/status`,
-                { status: newStatus },
-                {
-                    withCredentials: true,
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                }
-            );
+            await api.put(`/api/enquiries/${id}/status`, { status: newStatus });
             fetchEnquiries();
         } catch (error) {
             console.error('Error updating status:', error);
@@ -67,15 +48,7 @@ const EnquiryList = () => {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this enquiry?')) {
             try {
-                await axios.delete(
-                    `https://api.adsu.shop/api/enquiries/${id}`,
-                    {
-                        withCredentials: true,
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    }
-                );
+                await api.delete(`/api/enquiries/${id}`);
                 fetchEnquiries();
             } catch (error) {
                 console.error('Error deleting enquiry:', error);

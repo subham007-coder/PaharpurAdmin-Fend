@@ -30,7 +30,7 @@ const Login = () => {
         e.preventDefault();
         setLoading(true);
         setError('');
-
+    
         try {
             const response = await axios.post(
                 'https://api.adsu.shop/api/auth/login',
@@ -43,48 +43,38 @@ const Login = () => {
                     }
                 }
             );
-
-            // Debug response
-            console.log('Login Response:', response.data);
-
+    
+            console.log('Login response:', response.data);
+    
             if (response.data.success) {
-                // Make sure token exists in response
-                if (!response.data.token) {
-                    console.error('No token in response');
-                    setError('Authentication error: No token received');
-                    return;
-                }
-
-                // Clear any existing data first
-                localStorage.clear();
-
-                // Set token and user data
-                localStorage.setItem('token', response.data.token);
+                // Store user data and token
                 localStorage.setItem('user', JSON.stringify(response.data.user));
                 localStorage.setItem('isAuthenticated', 'true');
-
-                // Verify token was set
-                const storedToken = localStorage.getItem('token');
-                console.log('Stored Token:', storedToken);
-
-                // Navigate only if token is properly set
-                if (storedToken) {
-                    navigate('/edit-header');
-                } else {
-                    setError('Failed to store authentication token');
+                
+                // Store the token from response data
+                if (response.data.token) {
+                    localStorage.setItem('authToken', response.data.token);
                 }
+    
+                // Get token from cookie and store as backup
+            const cookies = document.cookie.split(';');
+            const tokenCookie = cookies.find(cookie => cookie.trim().startsWith('token='));
+            if (tokenCookie) {
+                const token = decodeURIComponent(tokenCookie.split('=')[1]);
+                    localStorage.setItem('authToken', token);
+                    console.log('Token stored from cookie');
+                }
+
+                // Add a small delay to ensure cookie is set
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            navigate('/edit-header');
             } else {
                 setError(response.data.message || 'Login failed. Please try again.');
             }
         } catch (error) {
-            console.error('Login error details:', error.response?.data);
-            if (error.response?.status === 401) {
-                setError('Invalid email or password');
-            } else if (error.response?.status === 429) {
-                setError('Too many login attempts. Please try again later.');
-            } else {
-                setError(error.response?.data?.message || 'Login failed. Please try again.');
-            }
+            console.error('Login error:', error.response?.data);
+            setError(error.response?.data?.message || 'Login failed. Please try again.');
         } finally {
             setLoading(false);
         }

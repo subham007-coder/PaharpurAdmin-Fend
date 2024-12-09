@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import api from '../api/axios';
 import { useNavigate } from 'react-router-dom';
+import api from '../api/axios';
 
 const AdminAccounts = () => {
     const [admins, setAdmins] = useState([]);
@@ -11,27 +11,37 @@ const AdminAccounts = () => {
     useEffect(() => {
         const fetchAdmins = async () => {
             try {
-                const token = localStorage.getItem('token');
+                // Check authentication before making the request
+                const token = localStorage.getItem('authToken');
                 if (!token) {
+                    console.log('No auth token found, redirecting to login');
                     navigate('/login');
                     return;
                 }
 
                 const response = await api.get('/api/auth/admins');
-
+                
                 if (response.data.success) {
                     setAdmins(response.data.admins);
+                    setError(null);
+                } else {
+                    setError('Failed to fetch admin accounts');
                 }
             } catch (error) {
                 console.error('Error fetching admins:', error);
-                setError('Failed to fetch admin accounts. Please try again later.');
+                if (error.message === 'Authentication required' || 
+                    error.response?.status === 401) {
+                    navigate('/login');
+                } else {
+                    setError('Failed to fetch admin accounts. Please try again later.');
+                }
+            } finally {
+                setLoading(false);
             }
         };
 
-        setTimeout(() => {
-            fetchAdmins();
-        }, 500);
-    }, []);
+        fetchAdmins();
+    }, [navigate]);
 
     if (loading) {
         return (
