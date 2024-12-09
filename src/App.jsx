@@ -24,14 +24,11 @@ const DashboardLayout = ({ children }) => (
 );
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
 
   useEffect(() => {
-    // Check for authentication status (e.g., from localStorage or a token)
     const token = localStorage.getItem('token');
-    if (token) {
-      setIsAuthenticated(true);
-    }
+    setIsAuthenticated(!!token);
   }, []);
 
   const handleSave = () => {

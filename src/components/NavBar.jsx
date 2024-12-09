@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 const NavBar = () => {
-    const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('isAuthenticated'));
+    const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
     const navigate = useNavigate();
     const location = useLocation();
 

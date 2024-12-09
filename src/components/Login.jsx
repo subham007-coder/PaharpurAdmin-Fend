@@ -36,7 +36,7 @@ const Login = () => {
                 'https://api.adsu.shop/api/auth/login',
                 credentials,
                 {
-                    withCredentials: true,  // Ensure cookies are included with request
+                    withCredentials: true,
                     headers: {
                         'Content-Type': 'application/json',
                         'Accept': 'application/json'
@@ -44,19 +44,40 @@ const Login = () => {
                 }
             );
 
+            // Debug response
+            console.log('Login Response:', response.data);
+
             if (response.data.success) {
-                // No need to store the token in localStorage as cookies will handle it
-                // If you want, you can store user data in localStorage or context
+                // Make sure token exists in response
+                if (!response.data.token) {
+                    console.error('No token in response');
+                    setError('Authentication error: No token received');
+                    return;
+                }
+
+                // Clear any existing data first
+                localStorage.clear();
+
+                // Set token and user data
+                localStorage.setItem('token', response.data.token);
                 localStorage.setItem('user', JSON.stringify(response.data.user));
-                localStorage.setItem('token', response.data.token);  // Store the token
-                
-                // Navigate to the admin dashboard or the next page
-                navigate('/edit-header');
+                localStorage.setItem('isAuthenticated', 'true');
+
+                // Verify token was set
+                const storedToken = localStorage.getItem('token');
+                console.log('Stored Token:', storedToken);
+
+                // Navigate only if token is properly set
+                if (storedToken) {
+                    navigate('/edit-header');
+                } else {
+                    setError('Failed to store authentication token');
+                }
             } else {
                 setError(response.data.message || 'Login failed. Please try again.');
             }
         } catch (error) {
-            console.error('Login error:', error);
+            console.error('Login error details:', error.response?.data);
             if (error.response?.status === 401) {
                 setError('Invalid email or password');
             } else if (error.response?.status === 429) {
