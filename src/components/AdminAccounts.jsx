@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api/axios';
 import { useNavigate } from 'react-router-dom';
 
 const AdminAccounts = () => {
@@ -17,41 +17,21 @@ const AdminAccounts = () => {
                     return;
                 }
 
-                const response = await axios.get(
-                    'https://api.adsu.shop/api/auth/admins',
-                    {
-                        headers: {
-                            'Authorization': `Bearer ${token}`
-                        }
-                    }
-                );
+                const response = await api.get('/api/auth/admins');
 
-                if (response.data && response.data.success) {
-                    const adminArray = response.data.admins || [];
-                    if (Array.isArray(adminArray)) {
-                        setAdmins(adminArray);
-                    } else {
-                        console.error('Admins data is not an array:', adminArray);
-                        setAdmins([]);
-                    }
-                } else {
-                    throw new Error('Invalid response format');
+                if (response.data.success) {
+                    setAdmins(response.data.admins);
                 }
             } catch (error) {
                 console.error('Error fetching admins:', error);
-                if (error.response?.status === 401) {
-                    localStorage.clear();
-                    navigate('/login');
-                } else {
-                    setError('Failed to fetch admin accounts. Please try again later.');
-                }
-            } finally {
-                setLoading(false);
+                setError('Failed to fetch admin accounts. Please try again later.');
             }
         };
 
-        fetchAdmins();
-    }, [navigate]);
+        setTimeout(() => {
+            fetchAdmins();
+        }, 500);
+    }, []);
 
     if (loading) {
         return (
