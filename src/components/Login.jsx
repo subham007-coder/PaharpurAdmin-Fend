@@ -3,83 +3,80 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
-    const [credentials, setCredentials] = useState({
-        email: '',
-        password: ''
-    });
+    const [credentials, setCredentials] = useState({ email: '', password: '' });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-    // Check if user is already logged in
+    // Check if the user is already logged in
     useEffect(() => {
-        const token = localStorage.getItem('token');  // Check if token is in localStorage
+        const token = localStorage.getItem('authToken');
         if (token) {
-            navigate('/edit-header', { replace: true });  // Navigate if token is found
+            navigate('/edit-header', { replace: true });
         }
-    }, [navigate]);  // Only run this effect once, on mount
+    }, [navigate]);
 
+    // Handle input changes
     const handleChange = (e) => {
         setCredentials({
             ...credentials,
-            [e.target.name]: e.target.value
+            [e.target.name]: e.target.value,
         });
     };
 
+    // Handle login form submission
     const handleLogin = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError('');
-    
+
         try {
             const response = await axios.post(
                 'https://api.adsu.shop/api/auth/login',
                 credentials,
                 {
-                    withCredentials: true,
+                    withCredentials: true, // Important: Ensures cookies are sent with the request
                     headers: {
                         'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    }
+                        Accept: 'application/json',
+                    },
                 }
             );
-    
+
             console.log('Login response:', response.data);
-    
+
             if (response.data.success) {
-                // Store user data and token
+                // Store token and user details in localStorage
+                localStorage.setItem('authToken', response.data.token);
                 localStorage.setItem('user', JSON.stringify(response.data.user));
                 localStorage.setItem('isAuthenticated', 'true');
-                
-                // Store the token from response data
-                if (response.data.token) {
-                    localStorage.setItem('authToken', response.data.token);
-                }
-    
-                // Get token from cookie and store as backup
-            const cookies = document.cookie.split(';');
-            const tokenCookie = cookies.find(cookie => cookie.trim().startsWith('token='));
-            if (tokenCookie) {
-                const token = decodeURIComponent(tokenCookie.split('=')[1]);
+
+                // Backup: Get token from cookies (if available)
+                const cookies = document.cookie.split(';');
+                const tokenCookie = cookies.find((cookie) =>
+                    cookie.trim().startsWith('token=')
+                );
+                if (tokenCookie) {
+                    const token = decodeURIComponent(tokenCookie.split('=')[1]);
                     localStorage.setItem('authToken', token);
-                    console.log('Token stored from cookie');
                 }
 
-                // Add a small delay to ensure cookie is set
-            await new Promise(resolve => setTimeout(resolve, 100));
-            
-            navigate('/edit-header');
+                // Navigate to the admin page
+                navigate('/edit-header');
             } else {
                 setError(response.data.message || 'Login failed. Please try again.');
             }
-        } catch (error) {
-            console.error('Login error:', error.response?.data);
-            setError(error.response?.data?.message || 'Login failed. Please try again.');
+        } catch (err) {
+            console.error('Login error:', err.response?.data);
+            setError(
+                err.response?.data?.message || 'An error occurred. Please try again.'
+            );
         } finally {
             setLoading(false);
         }
     };
 
+    // Handle "Enter" key press
     const handleKeyPress = (e) => {
         if (e.key === 'Enter') {
             handleLogin(e);
@@ -90,13 +87,11 @@ const Login = () => {
         <div className="min-h-screen flex items-center justify-center bg-gray-900">
             <div className="bg-gray-800 p-8 rounded-lg shadow-lg w-96">
                 <h2 className="text-2xl font-bold mb-6 text-white text-center">Admin Login</h2>
-                
                 {error && (
                     <div className="bg-red-500 text-white p-3 rounded mb-4 text-sm">
                         {error}
                     </div>
                 )}
-
                 <form onSubmit={handleLogin}>
                     <div className="mb-4">
                         <label className="block text-gray-300 mb-2" htmlFor="email">
@@ -115,7 +110,6 @@ const Login = () => {
                             autoComplete="email"
                         />
                     </div>
-
                     <div className="mb-6">
                         <label className="block text-gray-300 mb-2" htmlFor="password">
                             Password
@@ -133,17 +127,36 @@ const Login = () => {
                             autoComplete="current-password"
                         />
                     </div>
-
                     <button
                         type="submit"
                         disabled={loading}
-                        className={`w-full py-2 px-4 rounded ${loading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'} text-white font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
+                        className={`w-full py-2 px-4 rounded ${
+                            loading
+                                ? 'bg-blue-400 cursor-not-allowed'
+                                : 'bg-blue-500 hover:bg-blue-600'
+                        } text-white font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
                     >
                         {loading ? (
                             <span className="flex items-center justify-center">
-                                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                <svg
+                                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <circle
+                                        className="opacity-25"
+                                        cx="12"
+                                        cy="12"
+                                        r="10"
+                                        stroke="currentColor"
+                                        strokeWidth="4"
+                                    ></circle>
+                                    <path
+                                        className="opacity-75"
+                                        fill="currentColor"
+                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                    ></path>
                                 </svg>
                                 Logging in...
                             </span>
