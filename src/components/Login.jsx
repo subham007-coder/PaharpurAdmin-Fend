@@ -8,63 +8,75 @@ const Login = () => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-    // Check if user is already logged in
+    // Check authentication status only once on mount
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        const isAuthenticated = localStorage.getItem('isAuthenticated');
-        
-        if (token && isAuthenticated === 'true') {
-            navigate('/edit-header', { replace: true });
-        }
-    }, [navigate]);
+        const checkAuth = async () => {
+            const token = localStorage.getItem('token');
+            const isAuthenticated = localStorage.getItem('isAuthenticated');
+            
+            if (token && isAuthenticated === 'true') {
+                // Set axios default header
+                api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+                
+                // Verify token validity with backend
+                try {
+                    await api.get('/api/auth/verify');
+                    navigate('/edit-header', { replace: true });
+                } catch (err) {
+                    // Clear invalid auth data
+                    localStorage.clear();
+                }
+            }
+        };
+
+        checkAuth();
+    }, []); // Empty dependency array
 
     const handleChange = (e) => {
-        setCredentials({
-            ...credentials,
+        setCredentials(prev => ({
+            ...prev,
             [e.target.name]: e.target.value,
-        });
+        }));
     };
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        
-        // Prevent multiple submission attempts
         if (loading) return;
         
         setLoading(true);
         setError('');
 
         try {
-            const response = await api.post('/api/auth/login', credentials);
+            const response = await api.post('/api/auth/login', credentials, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Access-Control-Allow-Credentials': 'true'
+                },
+                withCredentials: true
+            });
 
             if (response.data.success) {
-                // Set all authentication data before navigation
-                localStorage.setItem('token', response.data.token);
-                localStorage.setItem('user', JSON.stringify(response.data.user));
+                const { token, user } = response.data;
+                
+                // Store in localStorage
+                localStorage.setItem('token', token);
+                localStorage.setItem('user', JSON.stringify(user));
                 localStorage.setItem('isAuthenticated', 'true');
 
-                // Set the token in axios defaults
-                api.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
-                
-                // Add a small delay before navigation to ensure state is updated
-                setTimeout(() => {
-                    navigate('/edit-header', { replace: true });
-                }, 100);
+                // Set token in axios defaults
+                api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+                // Navigate to dashboard
+                navigate('/edit-header', { replace: true });
             } else {
-                setError(response.data.message || 'Login failed. Please try again.');
+                setError(response.data.message || 'Login failed');
             }
         } catch (err) {
             console.error('Login error:', err);
-            setError(err.response?.data?.message || 'An error occurred. Please try again.');
+            setError(err.response?.data?.message || 'An error occurred');
         } finally {
             setLoading(false);
-        }
-    };
-
-    // Handle "Enter" key press
-    const handleKeyPress = (e) => {
-        if (e.key === 'Enter' && !loading) {
-            handleLogin(e);
         }
     };
 
@@ -88,7 +100,6 @@ const Login = () => {
                             name="email"
                             value={credentials.email}
                             onChange={handleChange}
-                            onKeyPress={handleKeyPress}
                             className="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:border-blue-500 focus:outline-none"
                             placeholder="Enter your email"
                             required
@@ -106,7 +117,6 @@ const Login = () => {
                             name="password"
                             value={credentials.password}
                             onChange={handleChange}
-                            onKeyPress={handleKeyPress}
                             className="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:border-blue-500 focus:outline-none"
                             placeholder="Enter your password"
                             required
@@ -123,33 +133,7 @@ const Login = () => {
                                 : 'bg-blue-500 hover:bg-blue-600'
                         } text-white font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
                     >
-                        {loading ? (
-                            <span className="flex items-center justify-center">
-                                <svg
-                                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <circle
-                                        className="opacity-25"
-                                        cx="12"
-                                        cy="12"
-                                        r="10"
-                                        stroke="currentColor"
-                                        strokeWidth="4"
-                                    ></circle>
-                                    <path
-                                        className="opacity-75"
-                                        fill="currentColor"
-                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                    ></path>
-                                </svg>
-                                Logging in...
-                            </span>
-                        ) : (
-                            'Login'
-                        )}
+                        {loading ? 'Logging in...' : 'Login'}
                     </button>
                 </form>
             </div>

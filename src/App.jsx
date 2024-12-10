@@ -1,5 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import React from 'react';
+import { 
+    BrowserRouter, 
+    Routes, 
+    Route, 
+    Navigate,
+    createRoutesFromElements,
+    createBrowserRouter,
+    RouterProvider
+} from 'react-router-dom';
 import NavBar from './components/NavBar';
 import EditHeader from './components/EditHeader';
 import BannerEdit from './components/BannerEdit';
@@ -23,109 +31,105 @@ const DashboardLayout = ({ children }) => (
   </div>
 );
 
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route>
+      {/* Public Routes */}
+      <Route path="/register" element={<Register />} />
+      <Route path="/login" element={<Login />} />
+      
+      {/* Protected Routes */}
+      <Route path="/" element={
+        <ProtectedRoute>
+          <DashboardLayout>
+            <Navigate to="/edit-header" replace />
+          </DashboardLayout>
+        </ProtectedRoute>
+      } />
+
+      <Route path="/edit-header" element={
+        <ProtectedRoute>
+          <DashboardLayout>
+            <EditHeader />
+          </DashboardLayout>
+        </ProtectedRoute>
+      } />
+
+      <Route path="/banner-edit" element={
+        <ProtectedRoute>
+          <DashboardLayout>
+            <BannerEdit />
+          </DashboardLayout>
+        </ProtectedRoute>
+      } />
+
+      <Route path="/hero-text-edit" element={
+        <ProtectedRoute>
+          <DashboardLayout>
+            <HeroTextEdit />
+          </DashboardLayout>
+        </ProtectedRoute>
+      } />
+
+      <Route path="/edit-modal" element={
+        <ProtectedRoute>
+          <DashboardLayout>
+            <ModalEdit />
+          </DashboardLayout>
+        </ProtectedRoute>
+      } />
+
+      <Route path="/create-new" element={
+        <ProtectedRoute>
+          <DashboardLayout>
+            <CreateNew />
+          </DashboardLayout>
+        </ProtectedRoute>
+      } />
+
+      <Route path="/edit-footer" element={
+        <ProtectedRoute>
+          <DashboardLayout>
+            <EditFooter />
+          </DashboardLayout>
+        </ProtectedRoute>
+      } />
+
+      <Route path="/admin-accounts" element={
+        <ProtectedRoute>
+          <DashboardLayout>
+            <AdminAccounts />
+          </DashboardLayout>
+        </ProtectedRoute>
+      } />
+
+      <Route path="/enquiries" element={
+        <ProtectedRoute>
+          <DashboardLayout>
+            <EnquiryList />
+          </DashboardLayout>
+        </ProtectedRoute>
+      } />
+
+      {/* Catch all route - redirect to login */}
+      <Route path="*" element={<Navigate to="/login" replace />} />
+    </Route>
+  ),
+  {
+    future: {
+      v7_startTransition: true,
+      v7_relativeSplatPath: true,
+      v7_fetcherPersist: true,
+      v7_normalizeFormMethod: true,
+      v7_partialHydration: true,
+      v7_skipActionErrorRevalidation: true
+    },
+    basename: '/'
+  }
+);
+
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(
-    localStorage.getItem('isAuthenticated') === 'true'
-  );
-
-  useEffect(() => {
-    const checkAuth = () => {
-      setIsAuthenticated(localStorage.getItem('isAuthenticated') === 'true');
-    };
-
-    window.addEventListener('storage', checkAuth);
-    return () => window.removeEventListener('storage', checkAuth);
-  }, []);
-
-  const handleSave = () => {
-    console.log("Data saved successfully!");
-  };
-
-  return (
-    <BrowserRouter>
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
-        
-        {/* Protected Routes */}
-        <Route path="/" element={
-          <ProtectedRoute isAuthenticated={isAuthenticated}>
-            <DashboardLayout>
-              <Navigate to="/edit-header" replace />
-            </DashboardLayout>
-          </ProtectedRoute>
-        } />
-
-        <Route path="/edit-header" element={
-          <ProtectedRoute isAuthenticated={isAuthenticated}>
-            <DashboardLayout>
-              <EditHeader />
-            </DashboardLayout>
-          </ProtectedRoute>
-        } />
-
-        <Route path="/banner-edit" element={
-          <ProtectedRoute isAuthenticated={isAuthenticated}>
-            <DashboardLayout>
-              <BannerEdit />
-            </DashboardLayout>
-          </ProtectedRoute>
-        } />
-
-        <Route path="/hero-text-edit" element={
-          <ProtectedRoute isAuthenticated={isAuthenticated}>
-            <DashboardLayout>
-              <HeroTextEdit />
-            </DashboardLayout>
-          </ProtectedRoute>
-        } />
-
-        <Route path="/edit-modal" element={
-          <ProtectedRoute isAuthenticated={isAuthenticated}>
-            <DashboardLayout>
-              <ModalEdit onSave={handleSave} />
-            </DashboardLayout>
-          </ProtectedRoute>
-        } />
-
-        <Route path="/create-new" element={
-          <ProtectedRoute isAuthenticated={isAuthenticated}>
-            <DashboardLayout>
-              <CreateNew onSave={handleSave} onClose={() => {}} />
-            </DashboardLayout>
-          </ProtectedRoute>
-        } />
-
-        <Route path="/edit-footer" element={
-          <ProtectedRoute isAuthenticated={isAuthenticated}>
-            <DashboardLayout>
-              <EditFooter />
-            </DashboardLayout>
-          </ProtectedRoute>
-        } />
-
-        <Route path="/admin-accounts" element={
-          <ProtectedRoute isAuthenticated={isAuthenticated}>
-            <DashboardLayout>
-              <AdminAccounts />
-            </DashboardLayout>
-          </ProtectedRoute>
-        } />
-
-        <Route path="/enquiries" element={
-          <ProtectedRoute isAuthenticated={isAuthenticated}>
-            <DashboardLayout>
-              <EnquiryList />
-            </DashboardLayout>
-          </ProtectedRoute>
-        } />
-
-        {/* Catch all route - redirect to login */}
-        <Route path="*" element={<Navigate to="/login" replace />} />
-      </Routes>
-    </BrowserRouter>
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default App;

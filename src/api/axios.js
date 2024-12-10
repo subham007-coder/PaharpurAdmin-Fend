@@ -6,8 +6,8 @@ const api = axios.create({
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
+        'Access-Control-Allow-Credentials': 'true',
     },
-    withXSRFToken: true
 });
 
 // Function to get token
@@ -22,7 +22,7 @@ api.interceptors.request.use(
         if (token) {
             config.headers['Authorization'] = `Bearer ${token}`;
         }
-        config.headers['X-Requested-With'] = 'XMLHttpRequest';
+        config.headers['Cookie'] = `SameSite=None; Secure`;
         return config;
     },
     (error) => {
@@ -35,7 +35,6 @@ api.interceptors.response.use(
     (response) => response,
     async (error) => {
         if (error.response?.status === 401) {
-            // Clear all auth data
             localStorage.clear();
             window.location.href = '/login';
         }
