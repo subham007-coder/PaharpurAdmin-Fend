@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import api from '../api/axios';
 
 const Login = () => {
     const [credentials, setCredentials] = useState({ email: '', password: '' });
@@ -31,33 +32,23 @@ const Login = () => {
         setError('');
 
         try {
-            const response = await axios.post(
-                'https://api.adsu.shop/api/auth/login',
-                credentials,
-                {
-                    withCredentials: true, // Important: Ensures cookies are sent with the request
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Accept: 'application/json',
-                    },
-                }
-            );
-
-            console.log('Login response:', response.data);
+            const response = await api.post('/api/auth/login', credentials);
 
             if (response.data.success) {
-                // Store token and user details consistently
+                // Store token and user details
                 localStorage.setItem('token', response.data.token);
                 localStorage.setItem('user', JSON.stringify(response.data.user));
                 localStorage.setItem('isAuthenticated', 'true');
+
+                // Set the token in axios defaults
+                api.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
                 
-                // Navigate to the admin page
                 navigate('/edit-header');
             } else {
                 setError(response.data.message || 'Login failed. Please try again.');
             }
         } catch (err) {
-            console.error('Login error:', err.response?.data);
+            console.error('Login error:', err);
             setError(err.response?.data?.message || 'An error occurred. Please try again.');
         } finally {
             setLoading(false);

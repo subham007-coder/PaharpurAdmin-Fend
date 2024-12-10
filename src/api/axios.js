@@ -5,8 +5,9 @@ const api = axios.create({
     withCredentials: true,
     headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json'
-    }
+        'Accept': 'application/json',
+    },
+    withXSRFToken: true
 });
 
 // Function to get token
@@ -21,6 +22,7 @@ api.interceptors.request.use(
         if (token) {
             config.headers['Authorization'] = `Bearer ${token}`;
         }
+        config.headers['X-Requested-With'] = 'XMLHttpRequest';
         return config;
     },
     (error) => {

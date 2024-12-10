@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from '../api/axios';
 
 const EditHeader = () => {
   const [headerData, setHeaderData] = useState({
@@ -13,7 +13,7 @@ const EditHeader = () => {
     // Fetch the current header data to populate the form
     const fetchHeaderData = async () => {
       try {
-        const response = await axios.get("https://api.adsu.shop/api/header");
+        const response = await api.get("/api/header");
         setHeaderData(response.data);
       } catch (error) {
         console.error("Error fetching header data:", error);
@@ -57,7 +57,7 @@ const EditHeader = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("https://api.adsu.shop/api/header/update", headerData);
+      const response = await api.post("/api/header/update", headerData);
       console.log("Header updated:", response.data);
     } catch (error) {
       console.error("Error updating header:", error);
