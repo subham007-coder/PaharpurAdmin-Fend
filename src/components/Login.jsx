@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 
@@ -9,15 +8,16 @@ const Login = () => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-    // Check if the user is already logged in
+    // Check if user is already logged in
     useEffect(() => {
-        const token = localStorage.getItem('authToken');
-        if (token) {
+        const token = localStorage.getItem('token');
+        const isAuthenticated = localStorage.getItem('isAuthenticated');
+        
+        if (token && isAuthenticated === 'true') {
             navigate('/edit-header', { replace: true });
         }
     }, [navigate]);
 
-    // Handle input changes
     const handleChange = (e) => {
         setCredentials({
             ...credentials,
@@ -25,9 +25,12 @@ const Login = () => {
         });
     };
 
-    // Handle login form submission
     const handleLogin = async (e) => {
         e.preventDefault();
+        
+        // Prevent multiple submission attempts
+        if (loading) return;
+        
         setLoading(true);
         setError('');
 
@@ -35,7 +38,7 @@ const Login = () => {
             const response = await api.post('/api/auth/login', credentials);
 
             if (response.data.success) {
-                // Store token and user details
+                // Set all authentication data before navigation
                 localStorage.setItem('token', response.data.token);
                 localStorage.setItem('user', JSON.stringify(response.data.user));
                 localStorage.setItem('isAuthenticated', 'true');
@@ -43,7 +46,10 @@ const Login = () => {
                 // Set the token in axios defaults
                 api.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
                 
-                navigate('/edit-header');
+                // Add a small delay before navigation to ensure state is updated
+                setTimeout(() => {
+                    navigate('/edit-header', { replace: true });
+                }, 100);
             } else {
                 setError(response.data.message || 'Login failed. Please try again.');
             }
@@ -57,7 +63,7 @@ const Login = () => {
 
     // Handle "Enter" key press
     const handleKeyPress = (e) => {
-        if (e.key === 'Enter') {
+        if (e.key === 'Enter' && !loading) {
             handleLogin(e);
         }
     };
@@ -86,6 +92,7 @@ const Login = () => {
                             className="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:border-blue-500 focus:outline-none"
                             placeholder="Enter your email"
                             required
+                            disabled={loading}
                             autoComplete="email"
                         />
                     </div>
@@ -103,6 +110,7 @@ const Login = () => {
                             className="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:border-blue-500 focus:outline-none"
                             placeholder="Enter your password"
                             required
+                            disabled={loading}
                             autoComplete="current-password"
                         />
                     </div>
