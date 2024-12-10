@@ -46,21 +46,11 @@ const Login = () => {
             console.log('Login response:', response.data);
 
             if (response.data.success) {
-                // Store token and user details in localStorage
-                localStorage.setItem('authToken', response.data.token);
+                // Store token and user details consistently
+                localStorage.setItem('token', response.data.token);
                 localStorage.setItem('user', JSON.stringify(response.data.user));
                 localStorage.setItem('isAuthenticated', 'true');
-
-                // Backup: Get token from cookies (if available)
-                const cookies = document.cookie.split(';');
-                const tokenCookie = cookies.find((cookie) =>
-                    cookie.trim().startsWith('token=')
-                );
-                if (tokenCookie) {
-                    const token = decodeURIComponent(tokenCookie.split('=')[1]);
-                    localStorage.setItem('authToken', token);
-                }
-
+                
                 // Navigate to the admin page
                 navigate('/edit-header');
             } else {
@@ -68,9 +58,7 @@ const Login = () => {
             }
         } catch (err) {
             console.error('Login error:', err.response?.data);
-            setError(
-                err.response?.data?.message || 'An error occurred. Please try again.'
-            );
+            setError(err.response?.data?.message || 'An error occurred. Please try again.');
         } finally {
             setLoading(false);
         }

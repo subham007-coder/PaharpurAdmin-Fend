@@ -6,42 +6,24 @@ const AdminAccounts = () => {
     const [admins, setAdmins] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchAdmins = async () => {
             try {
-                // Check authentication before making the request
-                const token = localStorage.getItem('authToken');
-                if (!token) {
-                    console.log('No auth token found, redirecting to login');
-                    navigate('/login');
-                    return;
-                }
-
                 const response = await api.get('/api/auth/admins');
-                
                 if (response.data.success) {
                     setAdmins(response.data.admins);
                     setError(null);
-                } else {
-                    setError('Failed to fetch admin accounts');
                 }
             } catch (error) {
-                console.error('Error fetching admins:', error);
-                if (error.message === 'Authentication required' || 
-                    error.response?.status === 401) {
-                    navigate('/login');
-                } else {
-                    setError('Failed to fetch admin accounts. Please try again later.');
-                }
+                setError('Failed to fetch admin accounts. Please try again later.');
             } finally {
                 setLoading(false);
             }
         };
 
         fetchAdmins();
-    }, [navigate]);
+    }, []);
 
     if (loading) {
         return (
