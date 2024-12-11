@@ -3,6 +3,7 @@ import axios from 'axios';
 const api = axios.create({
     baseURL: 'https://api.adsu.shop',
     withCredentials: true,
+    credentials: 'include',
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
@@ -14,24 +15,24 @@ const getToken = () => {
     return localStorage.getItem('token');
 };
 
-// Update interceptor
+// Simplified interceptor that only sets the Authorization header
 api.interceptors.request.use(
     (config) => {
         const token = getToken();
         if (token) {
             config.headers['Authorization'] = `Bearer ${token}`;
         }
+        // Remove any cookie-related configurations from headers
+        delete config.headers['Cookie'];
         return config;
     },
-    (error) => {
-        return Promise.reject(error);
-    }
+    (error) => Promise.reject(error)
 );
 
-// Update response interceptor
+// Response interceptor
 api.interceptors.response.use(
     (response) => response,
-    async (error) => {
+    (error) => {
         if (error.response?.status === 401) {
             localStorage.clear();
             window.location.href = '/login';
