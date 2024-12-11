@@ -7,10 +7,7 @@ const EditHeader = () => {
     contact: { phone: "", email: "" },
     navigationLinks: [],
   });
-  const [newNavigationLink, setNewNavigationLink] = useState({
-    name: "",
-    url: ""
-  });
+  const [newNavigationLink, setNewNavigationLink] = useState("");
 
   useEffect(() => {
     // Fetch the current header data to populate the form
@@ -44,20 +41,16 @@ const EditHeader = () => {
   };
 
   const handleNavigationLinkChange = (e) => {
-    const { name, value } = e.target;
-    setNewNavigationLink(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setNewNavigationLink(e.target.value);
   };
 
   const handleAddNavigationLink = () => {
-    if (newNavigationLink.name.trim() !== "" && newNavigationLink.url.trim() !== "") {
+    if (newNavigationLink.trim() !== "") {
       setHeaderData({
         ...headerData,
         navigationLinks: [...headerData.navigationLinks, newNavigationLink],
       });
-      setNewNavigationLink({ name: "", url: "" }); // Reset the input fields
+      setNewNavigationLink(""); // Reset the input field
     }
   };
 
@@ -118,60 +111,44 @@ const EditHeader = () => {
           <label className="block text-sm font-medium text-gray-300">Navigation Links</label>
           <div className="space-y-2">
             {headerData.navigationLinks.map((link, index) => (
-              <div key={index} className="flex items-center justify-between bg-gray-700 p-2 rounded">
-                <div>
-                  <span className="mr-2">{link.name}</span>
-                  <span className="text-gray-400">({link.url})</span>
-                </div>
+              <div key={index} className="flex items-center justify-between">
+                <span>{link}</span>
                 <button
                   type="button"
                   onClick={() => {
                     const updatedLinks = headerData.navigationLinks.filter(
-                      (_, i) => i !== index
+                      (item) => item !== link
                     );
                     setHeaderData({ ...headerData, navigationLinks: updatedLinks });
                   }}
-                  className="text-red-500 hover:text-red-600"
+                  className="text-red-600"
                 >
                   Remove
                 </button>
               </div>
             ))}
           </div>
-          
-          {/* New Navigation Link Inputs */}
-          <div className="mt-2 space-y-2">
-            <input
-              type="text"
-              name="name"
-              value={newNavigationLink.name}
-              onChange={handleNavigationLinkChange}
-              className="mt-1 block w-full px-4 py-2 bg-gray-600 border border-gray-300 rounded-md"
-              placeholder="Link Name (e.g., Home)"
-            />
-            <input
-              type="text"
-              name="url"
-              value={newNavigationLink.url}
-              onChange={handleNavigationLinkChange}
-              className="mt-1 block w-full px-4 py-2 bg-gray-600 border border-gray-300 rounded-md"
-              placeholder="Link URL (e.g., /home)"
-            />
-            <button
-              type="button"
-              onClick={handleAddNavigationLink}
-              className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-            >
-              Add Link
-            </button>
-          </div>
+          <input
+            type="text"
+            value={newNavigationLink}
+            onChange={handleNavigationLinkChange}
+            className="mt-1 block w-full px-4 py-2 text-black border-gray-200 rounded-md"
+            placeholder="Add new navigation link"
+          />
+          <button
+            type="button"
+            onClick={handleAddNavigationLink}
+            className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-md"
+          >
+            Add Link
+          </button>
         </div>
 
         {/* Submit Button */}
         <div>
           <button
             type="submit"
-            className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+            className="px-4 py-2 bg-green-600 text-white rounded-md"
           >
             Update Header
           </button>
