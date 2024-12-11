@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import uploadToCloudinary from '../utils/cloudinaryUpload';
 
 const CreateNew = ({ onSave, onClose }) => {
   // State to manage form fields
@@ -15,6 +16,8 @@ const CreateNew = ({ onSave, onClose }) => {
   const [newGalleryImage, setNewGalleryImage] = useState("");
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
+  const [mainImageFile, setMainImageFile] = useState(null);
+  const [galleryFiles, setGalleryFiles] = useState([]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -38,15 +41,51 @@ const CreateNew = ({ onSave, onClose }) => {
     }));
   };
 
+  const handleMainImageChange = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setMainImageFile(file);
+      setInitiative({
+        ...initiative,
+        mainImage: URL.createObjectURL(file)
+      });
+    }
+  };
+
+  const handleGalleryImageChange = async (e) => {
+    const files = Array.from(e.target.files);
+    const newGalleryPreviews = files.map(file => URL.createObjectURL(file));
+    
+    setGalleryFiles(prev => [...prev, ...files]);
+    setInitiative(prev => ({
+      ...prev,
+      gallery: [...prev.gallery, ...newGalleryPreviews]
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      // Send a POST request to create a new initiative
-      await axios.post("https://api.adsu.shop/api/initiatives", initiative);
+      let mainImageUrl = initiative.mainImage;
+      if (mainImageFile) {
+        mainImageUrl = await uploadToCloudinary(mainImageFile);
+      }
+
+      const galleryUrls = [];
+      for (const file of galleryFiles) {
+        const url = await uploadToCloudinary(file);
+        galleryUrls.push(url);
+      }
+
+      const initiativeData = {
+        ...initiative,
+        mainImage: mainImageUrl,
+        gallery: galleryUrls
+      };
+
+      await axios.post("https://api.adsu.shop/api/initiatives", initiativeData);
       setSuccess(true);
-      setTimeout(() => setSuccess(false), 3000); // Reset success message after 3 seconds
-      onSave(); // Callback to refresh the parent component
+      onSave();
     } catch (err) {
       setError("Failed to create new initiative");
     }
@@ -131,40 +170,33 @@ const CreateNew = ({ onSave, onClose }) => {
 
           {/* Main Image */}
           <div className="mb-4">
-            <label htmlFor="mainImage" className="block text-sm font-medium text-gray-700 mb-2">
-              Main Image
-            </label>
+            <label className="block text-sm font-medium mb-2">Main Image:</label>
             <input
-              type="text"
-              name="mainImage"
-              value={initiative.mainImage}
-              onChange={handleChange}
-              className="w-full border border-gray-300 p-2 rounded"
+              type="file"
+              accept="image/*"
+              onChange={handleMainImageChange}
+              className="w-full px-3 py-2 border rounded"
             />
+            {initiative.mainImage && (
+              <img 
+                src={initiative.mainImage} 
+                alt="Main Preview" 
+                className="mt-2 max-w-full h-40 object-cover rounded"
+              />
+            )}
           </div>
 
           {/* Gallery */}
           <div className="mb-4">
-            <label htmlFor="gallery" className="block text-sm font-medium text-gray-700 mb-2">
-              Gallery
-            </label>
-            <div className="flex items-center mb-2">
-              <input
-                type="text"
-                placeholder="Add new gallery image URL"
-                value={newGalleryImage}
-                onChange={(e) => setNewGalleryImage(e.target.value)}
-                className="w-full border border-gray-300 p-2 rounded"
-              />
-              <button
-                type="button"
-                onClick={handleAddGalleryImage}
-                className="ml-2 px-4 py-2 bg-blue-500 text-white rounded-md"
-              >
-                Add
-              </button>
-            </div>
-            <div className="grid grid-cols-3 gap-4">
+            <label className="block text-sm font-medium mb-2">Gallery Images:</label>
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={handleGalleryImageChange}
+              className="w-full px-3 py-2 border rounded"
+            />
+            <div className="grid grid-cols-3 gap-4 mt-2">
               {initiative.gallery.map((image, index) => (
                 <div key={index} className="relative">
                   <img

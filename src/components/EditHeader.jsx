@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import api from '../api/axios';
+import uploadToCloudinary from '../utils/cloudinaryUpload';
 
 const EditHeader = () => {
   const [headerData, setHeaderData] = useState({
@@ -7,7 +8,14 @@ const EditHeader = () => {
     contact: { phone: "", email: "" },
     navigationLinks: [],
   });
-  const [newNavigationLink, setNewNavigationLink] = useState("");
+  const [newNavigationLink, setNewNavigationLink] = useState({
+    name: "",
+    url: ""
+  });
+  const [logoFile, setLogoFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
 
   useEffect(() => {
     // Fetch the current header data to populate the form
@@ -17,13 +25,22 @@ const EditHeader = () => {
         setHeaderData(response.data);
       } catch (error) {
         console.error("Error fetching header data:", error);
+        setError("Failed to load header data");
       }
     };
     fetchHeaderData();
   }, []);
 
-  const handleLogoChange = (e) => {
-    setHeaderData({ ...headerData, logoUrl: e.target.value });
+  const handleLogoFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setLogoFile(file);
+      // Show preview
+      setHeaderData({ 
+        ...headerData, 
+        logoUrl: URL.createObjectURL(file) 
+      });
+    }
   };
 
   const handlePhoneChange = (e) => {
@@ -41,46 +58,89 @@ const EditHeader = () => {
   };
 
   const handleNavigationLinkChange = (e) => {
-    setNewNavigationLink(e.target.value);
+    const { name, value } = e.target;
+    setNewNavigationLink(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
   const handleAddNavigationLink = () => {
-    if (newNavigationLink.trim() !== "") {
+    if (newNavigationLink.name.trim() !== "" && newNavigationLink.url.trim() !== "") {
       setHeaderData({
         ...headerData,
         navigationLinks: [...headerData.navigationLinks, newNavigationLink],
       });
-      setNewNavigationLink(""); // Reset the input field
+      setNewNavigationLink({ name: "", url: "" }); // Reset the input fields
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError(null);
     try {
-      const response = await api.post("/api/header/update", headerData);
+      let logoUrl = headerData.logoUrl;
+      
+      // Upload new logo if file is selected
+      if (logoFile) {
+        logoUrl = await uploadToCloudinary(logoFile);
+      }
+
+      const updatedHeaderData = {
+        ...headerData,
+        logoUrl
+      };
+
+      const response = await api.post("/api/header/update", updatedHeaderData);
+      setSuccess("Header updated successfully!");
       console.log("Header updated:", response.data);
+      
+      // Reset file input
+      setLogoFile(null);
     } catch (error) {
       console.error("Error updating header:", error);
+      setError("Failed to update header");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="container mx-auto p-6">
       <h2 className="text-2xl font-bold mb-4">Edit Header</h2>
+      {error && <p className="text-red-500 mb-4">{error}</p>}
+      {success && <p className="text-green-500 mb-4">{success}</p>}
+      
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Logo URL */}
+        {/* Logo Upload */}
         <div>
-          <label htmlFor="logoUrl" className="block text-sm font-medium text-gray-300">
-            Logo URL
-          </label>
-          <input
-            type="text"
-            id="logoUrl"
-            value={headerData.logoUrl}
-            onChange={handleLogoChange}
-            className="mt-1 block w-full px-4 bg-gray-600 py-2 border border-gray-300 rounded-md"
-            placeholder="Enter Logo URL"
-          />
+          <label className="block text-sm font-medium text-gray-300">Logo</label>
+          <div className="mt-1 flex items-center space-x-4">
+            {headerData.logoUrl && (
+              <img 
+                src={headerData.logoUrl} 
+                alt="Logo Preview" 
+                className="h-20 w-auto object-contain"
+              />
+            )}
+            <div className="flex flex-col space-y-2">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleLogoFileChange}
+                className="block w-full text-sm text-gray-300
+                  file:mr-4 file:py-2 file:px-4
+                  file:rounded-md file:border-0
+                  file:text-sm file:font-semibold
+                  file:bg-gray-600 file:text-white
+                  hover:file:bg-gray-700"
+              />
+              <p className="text-xs text-gray-400">
+                Recommended size: 200x50 pixels
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Contact Information */}
@@ -111,46 +171,61 @@ const EditHeader = () => {
           <label className="block text-sm font-medium text-gray-300">Navigation Links</label>
           <div className="space-y-2">
             {headerData.navigationLinks.map((link, index) => (
-              <div key={index} className="flex items-center justify-between">
-                <span>{link}</span>
+              <div key={index} className="flex items-center justify-between bg-gray-700 p-2 rounded">
+                <div>
+                  <span className="mr-2">{link.name}</span>
+                  <span className="text-gray-400">({link.url})</span>
+                </div>
                 <button
                   type="button"
                   onClick={() => {
-                    const updatedLinks = headerData.navigationLinks.filter(
-                      (item) => item !== link
-                    );
+                    const updatedLinks = headerData.navigationLinks.filter((_, i) => i !== index);
                     setHeaderData({ ...headerData, navigationLinks: updatedLinks });
                   }}
-                  className="text-red-600"
+                  className="text-red-500 hover:text-red-600"
                 >
                   Remove
                 </button>
               </div>
             ))}
           </div>
-          <input
-            type="text"
-            value={newNavigationLink}
-            onChange={handleNavigationLinkChange}
-            className="mt-1 block w-full px-4 py-2 text-black border-gray-200 rounded-md"
-            placeholder="Add new navigation link"
-          />
-          <button
-            type="button"
-            onClick={handleAddNavigationLink}
-            className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-md"
-          >
-            Add Link
-          </button>
+          
+          <div className="mt-2 space-y-2">
+            <input
+              type="text"
+              name="name"
+              value={newNavigationLink.name}
+              onChange={handleNavigationLinkChange}
+              className="mt-1 block w-full px-4 py-2 bg-gray-600 border border-gray-300 rounded-md"
+              placeholder="Link Name (e.g., Home)"
+            />
+            <input
+              type="text"
+              name="url"
+              value={newNavigationLink.url}
+              onChange={handleNavigationLinkChange}
+              className="mt-1 block w-full px-4 py-2 bg-gray-600 border border-gray-300 rounded-md"
+              placeholder="Link URL (e.g., /home)"
+            />
+            <button
+              type="button"
+              onClick={handleAddNavigationLink}
+              className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              disabled={loading}
+            >
+              Add Link
+            </button>
+          </div>
         </div>
 
         {/* Submit Button */}
         <div>
           <button
             type="submit"
-            className="px-4 py-2 bg-green-600 text-white rounded-md"
+            className={`px-4 py-2 ${loading ? 'bg-gray-500' : 'bg-green-600 hover:bg-green-700'} text-white rounded-md`}
+            disabled={loading}
           >
-            Update Header
+            {loading ? 'Updating...' : 'Update Header'}
           </button>
         </div>
       </form>

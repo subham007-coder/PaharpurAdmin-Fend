@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import uploadToCloudinary from '../utils/cloudinaryUpload';
 
 const BannerEdit = () => {
   const [bannerData, setBannerData] = useState(null);
@@ -7,6 +8,7 @@ const BannerEdit = () => {
   const [loading, setLoading] = useState(true);
   const [success, setSuccess] = useState(null);
   const [error, setError] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
 
   // Fetch banner data
   useEffect(() => {
@@ -30,22 +32,28 @@ const BannerEdit = () => {
     e.preventDefault();
     setLoading(true); // Set loading state while submitting
     try {
-      if (bannerData) {
-        // Update existing banner
-        const response = await axios.put("https://api.adsu.shop/api/banner", newBanner);
-        setBannerData(response.data);
-      } else {
-        // Add a new banner
-        const response = await axios.post("https://api.adsu.shop/api/banner/create", newBanner);
-        setBannerData(response.data);
+      let imageUrl = newBanner.imageUrl;
+      
+      if (imageFile) {
+        imageUrl = await uploadToCloudinary(imageFile);
       }
+
+      const bannerData = {
+        ...newBanner,
+        imageUrl
+      };
+
+      if (bannerData) {
+        await axios.put("https://api.adsu.shop/api/banner", bannerData);
+      } else {
+        await axios.post("https://api.adsu.shop/api/banner/create", bannerData);
+      }
+      
       setSuccess("Banner saved successfully!");
-      setError(null);
     } catch (err) {
-      console.error(err);
       setError(err.response?.data?.message || "Failed to save the banner.");
     } finally {
-      setLoading(false); // Reset loading state
+      setLoading(false);
     }
   };
 
@@ -56,11 +64,15 @@ const BannerEdit = () => {
   };
 
   // Handle image upload
-  const handleImageUpload = (e) => {
+  const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const imageUrl = URL.createObjectURL(file); // Simulating file upload
-      setNewBanner({ ...newBanner, imageUrl });
+      setImageFile(file);
+      // Show preview
+      setNewBanner({ 
+        ...newBanner, 
+        imageUrl: URL.createObjectURL(file) 
+      });
     }
   };
 
@@ -84,15 +96,20 @@ const BannerEdit = () => {
 
         {/* Upload New Image */}
         <div className="mb-4">
-          <label className="block text-sm font-medium mb-2">Enter Image URL:</label>
+          <label className="block text-sm font-medium mb-2">Upload Image:</label>
           <input
-            type="text"
-            name="imageUrl"
-            value={newBanner.imageUrl}
-            onChange={handleChange}
-            placeholder="Enter image URL"
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
             className="w-full px-3 py-2 border rounded"
           />
+          {newBanner.imageUrl && (
+            <img 
+              src={newBanner.imageUrl} 
+              alt="Preview" 
+              className="mt-2 max-w-full h-40 object-cover rounded"
+            />
+          )}
         </div>
 
         {/* Overlay Text */}
