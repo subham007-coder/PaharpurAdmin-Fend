@@ -20,16 +20,26 @@ import Login from './components/Login';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminAccounts from './components/AdminAccounts';
 import EnquiryList from './components/EnquiryList';
+import { ThemeProvider, useTheme } from './context/ThemeContext';
+import TopNavbar from './components/TopNavbar';
 
 // Layout component for dashboard
-const DashboardLayout = ({ children }) => (
-  <div className='flex min-h-screen bg-slate-900 text-white'>
-    <NavBar />
-    <div className='flex-1 p-4'>
-      {children}
+const DashboardLayout = ({ children }) => {
+  const { theme } = useTheme();
+  return (
+    <div className={`flex min-h-screen ${
+      theme === 'dark' ? 'bg-slate-900 text-white' : 'bg-white text-gray-800'
+    }`}>
+      <NavBar />
+      <div className='flex-1'>
+        <TopNavbar />
+        <div className='p-4 mt-16'>
+          {children}
+        </div>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -129,7 +139,11 @@ const router = createBrowserRouter(
 );
 
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <ThemeProvider>
+      <RouterProvider router={router} />
+    </ThemeProvider>
+  );
 }
 
 export default App;

@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useTheme } from '../context/ThemeContext';
 
 const NavBar = () => {
+    const { theme } = useTheme();
     const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
     const navigate = useNavigate();
     const location = useLocation();
@@ -53,15 +55,21 @@ const NavBar = () => {
     };
 
     return (
-        <div className="flex flex-col w-64 bg-slate-900 text-white shadow-md">
-            <div className="p-4 border-b">
-                <h1 className="text-lg font-semibold">Dashboard</h1>
+        <div className={`flex flex-col w-64 ${
+            theme === 'dark' ? 'bg-slate-800' : 'bg-white'
+        } shadow-md`}>
+            <div className={`p-4 border-b ${
+                theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
+            }`}>
+                <h1 className={`text-lg font-semibold ${
+                    theme === 'dark' ? 'text-white' : 'text-gray-800'
+                }`}>Dashboard</h1>
             </div>
             <ul className="flex flex-col p-4 space-y-2">
                 <li>
                     <Link
                         to="/admin-accounts"
-                        className={`flex items-center p-2 rounded ${isActiveRoute('/admin-accounts') ? 'bg-blue-600 text-white' : 'hover:bg-gray-700'}`}
+                        className={`flex items-center p-2 rounded ${isActiveRoute('/admin-accounts') ? 'bg-blue-600 text-white' : 'hover:bg-gray-700 hover:text-white'}`}
                     >
                         Admin Accounts
                     </Link>
@@ -69,7 +77,7 @@ const NavBar = () => {
                 <li>
                     <Link
                         to="/edit-header"
-                        className={`flex items-center p-2 rounded ${isActiveRoute('/edit-header') ? 'bg-blue-600 text-white' : 'hover:bg-gray-700'}`}
+                        className={`flex items-center p-2 rounded ${isActiveRoute('/edit-header') ? 'bg-blue-600 text-white' : 'hover:bg-gray-700 hover:text-white'}`}
                     >
                         Edit Header
                     </Link>
@@ -77,7 +85,7 @@ const NavBar = () => {
                 <li>
                     <Link
                         to="/banner-edit"
-                        className={`flex items-center p-2 rounded ${isActiveRoute('/banner-edit') ? 'bg-blue-600 text-white' : 'hover:bg-gray-700'}`}
+                        className={`flex items-center p-2 rounded ${isActiveRoute('/banner-edit') ? 'bg-blue-600 text-white' : 'hover:bg-gray-700 hover:text-white'}`}
                     >
                         Banner Edit
                     </Link>
@@ -85,7 +93,7 @@ const NavBar = () => {
                 <li>
                     <Link
                         to="/Hero-Text-edit"
-                        className={`flex items-center p-2 rounded ${isActiveRoute('/Hero-Text-edit') ? 'bg-blue-600 text-white' : 'hover:bg-gray-700'}`}
+                        className={`flex items-center p-2 rounded ${isActiveRoute('/Hero-Text-edit') ? 'bg-blue-600 text-white' : 'hover:bg-gray-700 hover:text-white'}`}
                     >
                         Hero Text
                     </Link>
@@ -93,7 +101,7 @@ const NavBar = () => {
                 <li>
                     <Link
                         to="/create-new"
-                        className={`flex items-center p-2 rounded ${isActiveRoute('/create-new') ? 'bg-blue-600 text-white' : 'hover:bg-gray-700'}`}
+                        className={`flex items-center p-2 rounded ${isActiveRoute('/create-new') ? 'bg-blue-600 text-white' : 'hover:bg-gray-700 hover:text-white'}`}
                     >
                         Create New Initiative
                     </Link>
@@ -101,7 +109,7 @@ const NavBar = () => {
                 <li>
                     <Link
                         to="/Edit-modal"
-                        className={`flex items-center p-2 rounded ${isActiveRoute('/Edit-modal') ? 'bg-blue-600 text-white' : 'hover:bg-gray-700'}`}
+                        className={`flex items-center p-2 rounded ${isActiveRoute('/Edit-modal') ? 'bg-blue-600 text-white' : 'hover:bg-gray-700 hover:text-white'}`}
                     >
                         Edit Modal
                     </Link>
@@ -109,7 +117,7 @@ const NavBar = () => {
                 <li>
                     <Link
                         to="/edit-footer"
-                        className={`flex items-center p-2 rounded ${isActiveRoute('/edit-footer') ? 'bg-blue-600 text-white' : 'hover:bg-gray-700'}`}
+                        className={`flex items-center p-2 rounded ${isActiveRoute('/edit-footer') ? 'bg-blue-600 text-white' : 'hover:bg-gray-700 hover:text-white'}`}
                     >
                         Edit Footer
                     </Link>
@@ -117,7 +125,7 @@ const NavBar = () => {
                 <li>
                     <Link
                         to="/enquiries"
-                        className={`flex items-center p-2 rounded ${isActiveRoute('/enquiries') ? 'bg-blue-600 text-white' : 'hover:bg-gray-700'}`}
+                        className={`flex items-center p-2 rounded ${isActiveRoute('/enquiries') ? 'bg-blue-600 text-white' : 'hover:bg-gray-700 hover:text-white'}`}
                     >
                         Enquiries
                     </Link>

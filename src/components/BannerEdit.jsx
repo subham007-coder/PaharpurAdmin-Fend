@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import uploadToCloudinary from '../utils/cloudinaryUpload';
+import { useTheme } from '../context/ThemeContext';
 
 const BannerEdit = () => {
+  const { theme } = useTheme();
   const [bannerData, setBannerData] = useState(null);
   const [newBanner, setNewBanner] = useState({ imageUrl: "", overlayText: "" });
   const [loading, setLoading] = useState(true);
@@ -79,8 +81,14 @@ const BannerEdit = () => {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div className="p-6 bg-white text-black shadow-md rounded-lg max-w-md mx-auto">
-      <h2 className="text-xl font-bold mb-4">{bannerData ? "Edit Banner" : "Add New Banner"}</h2>
+    <div className={`p-6 ${
+      theme === 'dark' ? 'bg-slate-800' : 'bg-white'
+    } shadow-md rounded-lg max-w-md mx-auto`}>
+      <h2 className={`text-xl font-bold mb-4 ${
+        theme === 'dark' ? 'text-white' : 'text-gray-800'
+      }`}>
+        {bannerData ? "Edit Banner" : "Add New Banner"}
+      </h2>
 
       {success && <p className="text-green-500">{success}</p>}
       {error && <p className="text-red-500">{error}</p>}
@@ -121,7 +129,11 @@ const BannerEdit = () => {
             value={newBanner.overlayText}
             onChange={handleChange}
             placeholder="Enter overlay text"
-            className="w-full px-3 py-2 border rounded"
+            className={`w-full px-3 py-2 rounded ${
+              theme === 'dark' 
+                ? 'bg-slate-700 text-white border-gray-600' 
+                : 'bg-white text-gray-800 border-gray-300'
+            }`}
           />
         </div>
 
