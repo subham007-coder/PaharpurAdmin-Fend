@@ -84,23 +84,28 @@ const EditHeader = () => {
       
       // Upload new logo if file is selected
       if (logoFile) {
+        // Get the secure_url from Cloudinary
         logoUrl = await uploadToCloudinary(logoFile);
       }
 
       const updatedHeaderData = {
-        ...headerData,
-        logoUrl
+        logoUrl,
+        contact: headerData.contact,
+        navigationLinks: headerData.navigationLinks.map(link => ({
+          name: link.name,
+          url: link.url
+        }))
       };
 
       const response = await api.post("/api/header/update", updatedHeaderData);
       setSuccess("Header updated successfully!");
-      console.log("Header updated:", response.data);
+      setHeaderData(response.data);
       
       // Reset file input
       setLogoFile(null);
     } catch (error) {
       console.error("Error updating header:", error);
-      setError("Failed to update header");
+      setError(error.response?.data?.message || "Failed to update header");
     } finally {
       setLoading(false);
     }
