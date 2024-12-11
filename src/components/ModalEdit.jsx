@@ -139,6 +139,31 @@ const ModalEdit = ({ onClose, onSave }) => {
     }
   };
 
+  const handleDelete = async () => {
+    if (!initiativeId) {
+      setError("Invalid initiative ID");
+      return;
+    }
+
+    if (!window.confirm("Are you sure you want to delete this initiative?")) {
+      return;
+    }
+
+    setUploading(true);
+    try {
+      await axios.delete(`https://api.adsu.shop/api/initiatives/${initiativeId}`);
+      setSuccess("Initiative deleted successfully!");
+      setTimeout(() => {
+        onClose();
+        onSave(); // To refresh the parent component
+      }, 2000);
+    } catch (err) {
+      setError("Failed to delete initiative");
+    } finally {
+      setUploading(false);
+    }
+  };
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
 
@@ -254,7 +279,7 @@ const ModalEdit = ({ onClose, onSave }) => {
               </div>
             </div>
 
-            {/* Submit and Cancel Buttons */}
+            {/* Submit, Delete and Cancel Buttons */}
             <div className="flex justify-end space-x-4">
               <button
                 type="button"
@@ -263,6 +288,18 @@ const ModalEdit = ({ onClose, onSave }) => {
               >
                 Cancel
               </button>
+              
+              {initiativeId && ( // Only show delete button if an initiative is selected
+                <button
+                  type="button"
+                  onClick={handleDelete}
+                  disabled={uploading}
+                  className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md"
+                >
+                  {uploading ? 'Deleting...' : 'Delete'}
+                </button>
+              )}
+              
               <button
                 type="submit"
                 disabled={uploading}

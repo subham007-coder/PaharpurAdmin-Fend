@@ -65,6 +65,9 @@ const CreateNew = ({ onSave, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(null);  // Reset error state
+    setSuccess(false);  // Reset success state
+    
     try {
       let mainImageUrl = initiative.mainImage;
       if (mainImageFile) {
@@ -85,9 +88,14 @@ const CreateNew = ({ onSave, onClose }) => {
 
       await axios.post("https://api.adsu.shop/api/initiatives", initiativeData);
       setSuccess(true);
-      onSave();
+      setTimeout(() => {
+        onSave();
+        onClose();
+      }, 2000);
+      
     } catch (err) {
       setError("Failed to create new initiative");
+      setSuccess(false);  // Ensure success is false when there's an error
     }
   };
 
@@ -233,10 +241,10 @@ const CreateNew = ({ onSave, onClose }) => {
             </button>
           </div>
 
-          {success && (
+          {success && !error && (
             <p className="mt-3 text-green-500">Initiative created successfully!</p>
           )}
-          {error && <p className="mt-3 text-red-500">{error}</p>}
+          {error && !success && <p className="mt-3 text-red-500">{error}</p>}
         </form>
       </div>
     </section>
