@@ -23,7 +23,7 @@ import EnquiryList from './components/EnquiryList';
 
 // Layout component for dashboard
 const DashboardLayout = ({ children }) => (
-  <div className='flex h-screen bg-slate-900 text-white'>
+  <div className='flex min-h-screen bg-slate-900 text-white'>
     <NavBar />
     <div className='flex-1 p-4'>
       {children}
