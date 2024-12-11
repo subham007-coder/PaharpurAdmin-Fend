@@ -21,7 +21,6 @@ api.interceptors.request.use(
         if (token) {
             config.headers['Authorization'] = `Bearer ${token}`;
         }
-        config.headers['Cookie'] = `SameSite=None; Secure`;
         return config;
     },
     (error) => {
