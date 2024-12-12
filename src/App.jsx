@@ -33,7 +33,7 @@ const DashboardLayout = ({ children }) => {
       <NavBar />
       <div className='flex-1'>
         <TopNavbar />
-        <div className='p-4 mt-16'>
+        <div className='p-4'>
           {children}
         </div>
       </div>
