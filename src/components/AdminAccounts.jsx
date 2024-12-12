@@ -45,7 +45,7 @@ const AdminAccounts = () => {
 
     return (
         <div className="p-6">
-            <h2 className="text-2xl font-bold mb-6 text-white">Admin Accounts</h2>
+            <h2 className={`text-2xl font-bold mb-6 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Admin Accounts</h2>
             {admins.length === 0 ? (
                 <p className="text-white">No admin accounts found.</p>
             ) : (

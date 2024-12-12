@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useTheme } from '../context/ThemeContext'; // You'll need to create this
+import { useTheme } from '../context/ThemeContext';
 import { FaSun, FaMoon, FaUser } from 'react-icons/fa';
 
 const TopNavbar = () => {
@@ -25,7 +25,9 @@ const TopNavbar = () => {
     `}>
       {/* Left side - Page title or breadcrumbs */}
       <div>
-        <h1 className="text-xl font-semibold">Dashboard</h1>
+        <h1 className={`text-xl font-semibold ${
+          theme === 'dark' ? 'text-white' : 'text-gray-800'
+        }`}>Dashboard</h1>
       </div>
 
       {/* Right side - Theme toggle and user info */}
@@ -45,8 +47,14 @@ const TopNavbar = () => {
         {/* User Info */}
         <div className="flex items-center space-x-3">
           <div className="text-right">
-            <p className="font-medium">{user?.name || 'User Name'}</p>
-            <p className="text-sm text-gray-500 dark:text-gray-400">{user?.email || 'user@example.com'}</p>
+            <p className={`font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>
+              {user?.email || 'user@example.com'}
+            </p>
+            <p className={`text-sm ${
+              theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+            }`}>
+              {user?.role || 'User Role'}
+            </p>
           </div>
           <div className={`
             w-10 h-10 rounded-full flex items-center justify-center
@@ -59,7 +67,7 @@ const TopNavbar = () => {
                 className="w-8 h-8 rounded-full object-cover"
               />
             ) : (
-              <FaUser className="text-gray-500" />
+              <FaUser className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-500'}`} />
             )}
           </div>
         </div>

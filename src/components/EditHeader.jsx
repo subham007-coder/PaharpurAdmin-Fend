@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import api from '../api/axios';
 import uploadToCloudinary from '../utils/cloudinaryUpload';
+import { useTheme } from '../context/ThemeContext';
 
 const EditHeader = () => {
+  const { theme } = useTheme();
   const [headerData, setHeaderData] = useState({
     logoUrl: "",
     contact: { phone: "", email: "" },
@@ -112,7 +114,7 @@ const EditHeader = () => {
   };
 
   return (
-    <div className="container mx-auto p-6">
+    <div className={`container mx-auto p-6 ${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-white text-gray-800'}`}>
       <h2 className="text-2xl font-bold mb-4">Edit Header</h2>
       {error && <p className="text-red-500 mb-4">{error}</p>}
       {success && <p className="text-green-500 mb-4">{success}</p>}
@@ -150,36 +152,36 @@ const EditHeader = () => {
 
         {/* Contact Information */}
         <div>
-          <label className="block text-sm font-medium text-gray-300">Phone</label>
+          <label className="block text-sm font-medium text-gray-300" style={{ color: theme === 'dark' ? 'white' : 'black' }}>Phone</label>
           <input
             type="text"
             value={headerData.contact.phone}
             onChange={handlePhoneChange}
-            className="mt-1 block w-full px-4 py-2 bg-gray-600 border border-gray-300 rounded-md"
+            className={`mt-1 block w-full px-4 py-2 ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'} border border-gray-300 rounded-md`}
             placeholder="Enter phone number"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-300">Email</label>
+          <label className="block text-sm font-medium text-gray-300" style={{ color: theme === 'dark' ? 'white' : 'black' }}>Email</label>
           <input
             type="email"
             value={headerData.contact.email}
             onChange={handleEmailChange}
-            className="mt-1 block w-full px-4 py-2 border bg-gray-600 border-gray-300 rounded-md"
+            className={`mt-1 block w-full px-4 py-2 ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'} border border-gray-300 rounded-md`}
             placeholder="Enter email"
           />
         </div>
 
         {/* Navigation Links */}
         <div>
-          <label className="block text-sm font-medium text-gray-300">Navigation Links</label>
+          <label className="block text-sm font-medium text-gray-300" style={{ color: theme === 'dark' ? 'white' : 'black' }}>Navigation Links</label>
           <div className="space-y-2">
             {headerData.navigationLinks.map((link, index) => (
-              <div key={index} className="flex items-center justify-between bg-gray-700 p-2 rounded">
+              <div key={index} className={`flex items-center justify-between ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-200'} p-2 rounded`}>
                 <div>
                   <span className="mr-2">{link.name}</span>
-                  <span className="text-gray-400">({link.url})</span>
+                  <span className={`text-gray-400 ${theme === 'dark' ? 'text-gray-500' : 'text-gray-400'}`}>({link.url})</span>
                 </div>
                 <button
                   type="button"
@@ -187,7 +189,7 @@ const EditHeader = () => {
                     const updatedLinks = headerData.navigationLinks.filter((_, i) => i !== index);
                     setHeaderData({ ...headerData, navigationLinks: updatedLinks });
                   }}
-                  className="text-red-500 hover:text-red-600"
+                  className={`text-red-500 hover:text-red-600 ${theme === 'dark' ? 'text-red-600' : 'text-red-500'}`}
                 >
                   Remove
                 </button>
@@ -201,7 +203,7 @@ const EditHeader = () => {
               name="name"
               value={newNavigationLink.name}
               onChange={handleNavigationLinkChange}
-              className="mt-1 block w-full px-4 py-2 bg-gray-600 border border-gray-300 rounded-md"
+              className={`mt-1 block w-full px-4 py-2 ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'} border border-gray-300 rounded-md`}
               placeholder="Link Name (e.g., Home)"
             />
             <input
@@ -209,7 +211,7 @@ const EditHeader = () => {
               name="url"
               value={newNavigationLink.url}
               onChange={handleNavigationLinkChange}
-              className="mt-1 block w-full px-4 py-2 bg-gray-600 border border-gray-300 rounded-md"
+              className={`mt-1 block w-full px-4 py-2 ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'} border border-gray-300 rounded-md`}
               placeholder="Link URL (e.g., /home)"
             />
             <button

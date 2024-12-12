@@ -80,7 +80,7 @@ const EnquiryList = () => {
 
     return (
         <div className="p-6">
-            <h2 className="text-2xl font-bold mb-6 text-white">Enquiries</h2>
+            <h2 className={`text-2xl font-bold mb-6 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Enquiries</h2>
             <div className="grid gap-4">
                 {enquiries.map((enquiry) => (
                     <div key={enquiry._id} className="bg-slate-800 p-4 rounded-lg">
