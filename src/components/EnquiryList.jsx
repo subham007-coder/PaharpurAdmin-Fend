@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from '../context/ThemeContext';
 import api from '../api/axios'; // Import the configured api instance
 
 const EnquiryList = () => {
+    const { theme } = useTheme();
     const [enquiries, setEnquiries] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
