@@ -134,10 +134,19 @@ const EnquiryList = () => {
                                     <p className="text-white">
                                         <span className="font-semibold">Subject:</span> {enquiry.subject}
                                     </p>
+                                    {/* Status Badge */}
+                                    <div className={`mt-2 inline-block px-2 py-1 rounded text-sm ${
+                                        enquiry.status === 'completed' ? 'bg-green-500' :
+                                        enquiry.status === 'inProgress' ? 'bg-yellow-500' :
+                                        'bg-red-500'
+                                    }`}>
+                                        {enquiry.status}
+                                    </div>
+                                    {/* Status Dropdown */}
                                     <select
                                         value={enquiry.status}
-                                        onChange={(e) => handleStatusUpdate(enquiry._id, e.target.value)} // Call the updated function
-                                        className="bg-slate-700 text-white border border-slate-600 rounded p-2"
+                                        onChange={(e) => handleStatusUpdate(enquiry._id, e.target.value)}
+                                        className="bg-slate-700 text-white border border-slate-600 rounded p-2 mt-2"
                                     >
                                         <option value="pending">Pending</option>
                                         <option value="inProgress">In Progress</option>
