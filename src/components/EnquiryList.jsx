@@ -89,8 +89,8 @@ const EnquiryList = () => {
     };
 
     const openModal = (enquiry) => {
-        setSelectedEnquiry(enquiry);
-        setIsModalOpen(true);
+        setSelectedEnquiry(enquiry); // Set the selected enquiry
+        setIsModalOpen(true); // Open the modal
     };
 
     const closeModal = () => {
