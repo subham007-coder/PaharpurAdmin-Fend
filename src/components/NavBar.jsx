@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
-import { FaUser, FaEdit, FaBanner, FaTextHeight, FaPlus, FaCog, FaEnvelope, FaSignOutAlt } from 'react-icons/fa';
+import { FaUser, FaEdit, FaImage, FaTextHeight, FaPlus, FaCog, FaEnvelope, FaSignOutAlt } from 'react-icons/fa';
 
 const NavBar = () => {
     const { theme } = useTheme();
@@ -88,7 +88,7 @@ const NavBar = () => {
                         to="/banner-edit"
                         className={`flex items-center p-2 rounded ${isActiveRoute('/banner-edit') ? 'bg-blue-600 text-white' : 'hover:bg-gray-700 hover:text-white'}`}
                     >
-                        <FaBanner className="mr-2" /> Banner Edit
+                        <FaImage className="mr-2" /> Banner Edit
                     </Link>
                 </li>
                 <li>
