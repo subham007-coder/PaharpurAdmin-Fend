@@ -15,23 +15,26 @@ const EnquiryList = () => {
     const [selectedEnquiry, setSelectedEnquiry] = useState(null); // New state for selected enquiry
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    useEffect(() => {
-        const fetchEnquiries = async () => {
-            try {
-                const response = await api.get('/api/enquiries');
-                if (response.data.success) {
-                    setEnquiries(response.data.enquiries);
-                    setError(null);
-                    toast.success('Enquiries loaded successfully!'); // Show success toast
-                }
-            } catch (error) {
-                setError('Failed to fetch enquiries. Please try again later.');
-                toast.error('Failed to fetch enquiries. Please try again later.'); // Show error toast
-            } finally {
-                setLoading(false);
+    const fetchEnquiries = async () => {
+        setLoading(true); // Set loading state
+        try {
+            const response = await api.get('/api/enquiries');
+            if (response.data.success) {
+                setEnquiries(response.data.enquiries);
+                setError(null);
+                toast.success('Enquiries loaded successfully!'); // Show success toast
+            } else {
+                toast.error('Failed to load enquiries.'); // Show error toast
             }
-        };
+        } catch (error) {
+            setError('Failed to fetch enquiries. Please try again later.');
+            toast.error('Failed to fetch enquiries. Please try again later.'); // Show error toast
+        } finally {
+            setLoading(false); // Reset loading state
+        }
+    };
 
+    useEffect(() => {
         fetchEnquiries();
     }, []);
 
@@ -42,7 +45,7 @@ const EnquiryList = () => {
             // Check if the response indicates success
             if (response.data.success) {
                 toast.success('Status updated successfully!'); // Show success toast
-                fetchEnquiries(); // Refresh the enquiries list
+                await fetchEnquiries(); // Refresh the enquiries list
             } else {
                 // If the response indicates failure, show an error toast
                 toast.error('Failed to update status. Please try again.'); // Show error toast
