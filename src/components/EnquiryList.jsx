@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import api from '../api/axios'; // Import the configured api instance
+import Modal from 'react-modal'; // Import a modal library
 
 const EnquiryList = () => {
     const { theme } = useTheme();
@@ -9,6 +10,7 @@ const EnquiryList = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
+    const [selectedEnquiry, setSelectedEnquiry] = useState(null); // New state for selected enquiry
 
     const fetchEnquiries = async () => {
         try {
@@ -62,6 +64,14 @@ const EnquiryList = () => {
                 }
             }
         }
+    };
+
+    const openDetailsModal = (enquiry) => {
+        setSelectedEnquiry(enquiry); // Set the selected enquiry
+    };
+
+    const closeDetailsModal = () => {
+        setSelectedEnquiry(null); // Clear the selected enquiry
     };
 
     if (loading) {
@@ -121,11 +131,34 @@ const EnquiryList = () => {
                                 >
                                     Delete
                                 </button>
+                                <button
+                                    onClick={() => openDetailsModal(enquiry)} // Add button for more details
+                                    className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition-colors"
+                                >
+                                    More Details
+                                </button>
                             </div>
                         </div>
                     </div>
                 ))}
             </div>
+
+            {/* Modal for displaying enquiry details */}
+            <Modal isOpen={!!selectedEnquiry} onRequestClose={closeDetailsModal}>
+                <h2 className="text-2xl font-bold">Enquiry Details</h2>
+                {selectedEnquiry && (
+                    <div>
+                        <p><strong>Name:</strong> {selectedEnquiry.name}</p>
+                        <p><strong>Email:</strong> {selectedEnquiry.email}</p>
+                        <p><strong>Phone:</strong> {selectedEnquiry.phone}</p>
+                        <p><strong>Subject:</strong> {selectedEnquiry.subject}</p>
+                        <p><strong>Message:</strong> {selectedEnquiry.message}</p>
+                        <p><strong>Status:</strong> {selectedEnquiry.status}</p>
+                        <p><strong>Created At:</strong> {new Date(selectedEnquiry.createdAt).toLocaleString()}</p>
+                    </div>
+                )}
+                <button onClick={closeDetailsModal} className="bg-red-500 text-white px-3 py-1 rounded">Close</button>
+            </Modal>
         </div>
     );
 };
