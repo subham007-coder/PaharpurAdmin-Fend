@@ -63,6 +63,8 @@ const EnquiryList = () => {
     };
 
     const handleDelete = async (id) => {
+        console.log('Attempting to delete enquiry with ID:', id); // Debugging line
+        console.log('Selected Enquiry:', selectedEnquiry); // Debugging line
         if (!id) {
             toast.error('No enquiry selected for deletion.'); // Show error toast if no ID is provided
             return;
@@ -89,6 +91,7 @@ const EnquiryList = () => {
     };
 
     const openModal = (enquiry) => {
+        console.log('Opening modal for enquiry:', enquiry); // Debugging line
         setSelectedEnquiry(enquiry); // Set the selected enquiry
         setIsModalOpen(true); // Open the modal
     };
@@ -195,7 +198,7 @@ const EnquiryList = () => {
             <ConfirmationModal
                 isOpen={isModalOpen}
                 onClose={closeModal}
-                onConfirm={() => handleDelete(selectedEnquiry?._id)}
+                onConfirm={() => handleDelete(selectedEnquiry?._id)} // Pass the ID of the selected enquiry
                 enquiryName={selectedEnquiry?.name} // Pass the enquiry name for display
             />
         </div>
