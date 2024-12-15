@@ -8,6 +8,8 @@ import {
     createBrowserRouter,
     RouterProvider
 } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import NavBar from './components/NavBar';
 import EditHeader from './components/EditHeader';
 import BannerEdit from './components/BannerEdit';
@@ -142,6 +144,7 @@ function App() {
   return (
     <ThemeProvider>
       <RouterProvider router={router} />
+      <ToastContainer />
     </ThemeProvider>
   );
 }

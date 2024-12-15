@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
+import { toast } from 'react-toastify'; // Import toast
 
 const Login = () => {
     const [credentials, setCredentials] = useState({ email: '', password: '' });
@@ -48,20 +49,21 @@ const Login = () => {
                 // Set token in axios defaults
                 api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
-                // Use requestAnimationFrame for smoother navigation
-                requestAnimationFrame(() => {
-                    // Small delay to ensure state updates are complete
-                    setTimeout(() => {
-                        navigate('/edit-header', { replace: true });
-                    }, 100);
-                });
+                // Show success toast
+                toast.success('Login successful! Redirecting...');
+
+                // Navigate to the edit-header page
+                navigate('/edit-header', { replace: true });
             } else {
                 setError(response.data.message || 'Login failed');
+                setIsSuccess(false);
+                toast.error(response.data.message || 'Login failed'); // Show error toast
             }
         } catch (err) {
             console.error('Login error:', err);
             setError(err.response?.data?.message || 'An error occurred');
             setIsSuccess(false);
+            toast.error(err.response?.data?.message || 'An error occurred'); // Show error toast
         } finally {
             setLoading(false);
         }

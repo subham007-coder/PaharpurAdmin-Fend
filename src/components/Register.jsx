@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const Register = () => {
     const navigate = useNavigate();
@@ -68,24 +69,18 @@ const Register = () => {
             });
 
             const data = await response.json();
-            console.log('Registration response:', data);
 
             if (response.ok && data.success) {
-                // Store authentication state
-                localStorage.setItem('isAuthenticated', 'true');
-                // Store user data if needed
-                if (data.user) {
-                    localStorage.setItem('user', JSON.stringify(data.user));
-                }
-                console.log('Authentication stored, redirecting to dashboard...');
-                // Redirect to dashboard
+                toast.success('Registration successful!');
                 navigate('/edit-header');
             } else {
                 setError(data.message || 'Registration failed');
+                toast.error(data.message || 'Registration failed');
             }
         } catch (error) {
             console.error('Registration error:', error);
             setError('Registration failed. Please try again.');
+            toast.error('Registration failed. Please try again.');
         } finally {
             setLoading(false);
         }

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import api from '../api/axios'; // Import the configured api instance
 import Modal from 'react-modal'; // Import a modal library
+import { toast } from 'react-toastify'; // Import toast
 
 const EnquiryList = () => {
     const { theme } = useTheme();
@@ -12,27 +13,25 @@ const EnquiryList = () => {
     const navigate = useNavigate();
     const [selectedEnquiry, setSelectedEnquiry] = useState(null); // New state for selected enquiry
 
-    const fetchEnquiries = async () => {
-        try {
-            const response = await api.get('/api/enquiries');
-            setEnquiries(response.data.enquiries);
-            setError(null);
-        } catch (error) {
-            console.error('Error:', error);
-            if (error.response?.status === 401) {
-                setError('Please login to view enquiries');
-                navigate('/login');
-            } else {
-                setError('Failed to fetch enquiries');
-            }
-        } finally {
-            setLoading(false);
-        }
-    };
-
     useEffect(() => {
+        const fetchEnquiries = async () => {
+            try {
+                const response = await api.get('/api/enquiries');
+                if (response.data.success) {
+                    setEnquiries(response.data.enquiries);
+                    setError(null);
+                    toast.success('Enquiries loaded successfully!'); // Show success toast
+                }
+            } catch (error) {
+                setError('Failed to fetch enquiries. Please try again later.');
+                toast.error('Failed to fetch enquiries. Please try again later.'); // Show error toast
+            } finally {
+                setLoading(false);
+            }
+        };
+
         fetchEnquiries();
-    }, [navigate]);
+    }, []);
 
     const handleStatusUpdate = async (id, newStatus) => {
         try {
