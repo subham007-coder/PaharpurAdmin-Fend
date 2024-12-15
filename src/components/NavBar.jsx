@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
+import { FaUser, FaEdit, FaBanner, FaTextHeight, FaPlus, FaCog, FaEnvelope, FaSignOutAlt } from 'react-icons/fa';
 
 const NavBar = () => {
     const { theme } = useTheme();
@@ -63,7 +64,7 @@ const NavBar = () => {
             }`}>
                 <h1 className={`text-lg font-semibold ${
                     theme === 'dark' ? 'text-white' : 'text-gray-800'
-                }`}>Dashboard</h1>
+                }`}>Admin Panel</h1>
             </div>
             <ul className="flex flex-col p-4 space-y-2">
                 <li>
@@ -71,7 +72,7 @@ const NavBar = () => {
                         to="/admin-accounts"
                         className={`flex items-center p-2 rounded ${isActiveRoute('/admin-accounts') ? 'bg-blue-600 text-white' : 'hover:bg-gray-700 hover:text-white'}`}
                     >
-                        Admin Accounts
+                        <FaUser className="mr-2" /> Admin Accounts
                     </Link>
                 </li>
                 <li>
@@ -79,7 +80,7 @@ const NavBar = () => {
                         to="/edit-header"
                         className={`flex items-center p-2 rounded ${isActiveRoute('/edit-header') ? 'bg-blue-600 text-white' : 'hover:bg-gray-700 hover:text-white'}`}
                     >
-                        Edit Header
+                        <FaEdit className="mr-2" /> Edit Header
                     </Link>
                 </li>
                 <li>
@@ -87,15 +88,15 @@ const NavBar = () => {
                         to="/banner-edit"
                         className={`flex items-center p-2 rounded ${isActiveRoute('/banner-edit') ? 'bg-blue-600 text-white' : 'hover:bg-gray-700 hover:text-white'}`}
                     >
-                        Banner Edit
+                        <FaBanner className="mr-2" /> Banner Edit
                     </Link>
                 </li>
                 <li>
                     <Link
-                        to="/Hero-Text-edit"
-                        className={`flex items-center p-2 rounded ${isActiveRoute('/Hero-Text-edit') ? 'bg-blue-600 text-white' : 'hover:bg-gray-700 hover:text-white'}`}
+                        to="/hero-text-edit"
+                        className={`flex items-center p-2 rounded ${isActiveRoute('/hero-text-edit') ? 'bg-blue-600 text-white' : 'hover:bg-gray-700 hover:text-white'}`}
                     >
-                        Hero Text
+                        <FaTextHeight className="mr-2" /> Hero Text
                     </Link>
                 </li>
                 <li>
@@ -103,15 +104,15 @@ const NavBar = () => {
                         to="/create-new"
                         className={`flex items-center p-2 rounded ${isActiveRoute('/create-new') ? 'bg-blue-600 text-white' : 'hover:bg-gray-700 hover:text-white'}`}
                     >
-                        Create New Initiative
+                        <FaPlus className="mr-2" /> Create New Initiative
                     </Link>
                 </li>
                 <li>
                     <Link
-                        to="/Edit-modal"
-                        className={`flex items-center p-2 rounded ${isActiveRoute('/Edit-modal') ? 'bg-blue-600 text-white' : 'hover:bg-gray-700 hover:text-white'}`}
+                        to="/edit-modal"
+                        className={`flex items-center p-2 rounded ${isActiveRoute('/edit-modal') ? 'bg-blue-600 text-white' : 'hover:bg-gray-700 hover:text-white'}`}
                     >
-                        Edit Modal
+                        <FaCog className="mr-2" /> Edit Modal
                     </Link>
                 </li>
                 <li>
@@ -119,7 +120,7 @@ const NavBar = () => {
                         to="/edit-footer"
                         className={`flex items-center p-2 rounded ${isActiveRoute('/edit-footer') ? 'bg-blue-600 text-white' : 'hover:bg-gray-700 hover:text-white'}`}
                     >
-                        Edit Footer
+                        <FaEdit className="mr-2" /> Edit Footer
                     </Link>
                 </li>
                 <li>
@@ -127,7 +128,7 @@ const NavBar = () => {
                         to="/enquiries"
                         className={`flex items-center p-2 rounded ${isActiveRoute('/enquiries') ? 'bg-blue-600 text-white' : 'hover:bg-gray-700 hover:text-white'}`}
                     >
-                        Enquiries
+                        <FaEnvelope className="mr-2" /> Enquiries
                     </Link>
                 </li>
                 <li className="mt-auto pt-4">
@@ -135,7 +136,7 @@ const NavBar = () => {
                         onClick={handleLogout}
                         className="w-full flex items-center p-2 rounded text-red-500 hover:bg-gray-700 hover:text-red-400"
                     >
-                        Logout
+                        <FaSignOutAlt className="mr-2" /> Logout
                     </button>
                 </li>
             </ul>
