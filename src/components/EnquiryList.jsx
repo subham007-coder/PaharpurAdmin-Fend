@@ -144,20 +144,27 @@ const EnquiryList = () => {
             </div>
 
             {/* Modal for displaying enquiry details */}
-            <Modal isOpen={!!selectedEnquiry} onRequestClose={closeDetailsModal}>
-                <h2 className="text-2xl font-bold">Enquiry Details</h2>
+            <Modal
+                isOpen={!!selectedEnquiry}
+                onRequestClose={closeDetailsModal}
+                className="bg-white rounded-lg shadow-lg p-6 max-w-lg mx-auto"
+                overlayClassName="fixed inset-0 bg-black bg-opacity-50"
+            >
+                <h2 className="text-2xl font-bold mb-4">Enquiry Details</h2>
                 {selectedEnquiry && (
-                    <div>
-                        <p><strong>Name:</strong> {selectedEnquiry.name}</p>
-                        <p><strong>Email:</strong> {selectedEnquiry.email}</p>
-                        <p><strong>Phone:</strong> {selectedEnquiry.phone}</p>
-                        <p><strong>Subject:</strong> {selectedEnquiry.subject}</p>
-                        <p><strong>Message:</strong> {selectedEnquiry.message}</p>
-                        <p><strong>Status:</strong> {selectedEnquiry.status}</p>
-                        <p><strong>Created At:</strong> {new Date(selectedEnquiry.createdAt).toLocaleString()}</p>
+                    <div className="space-y-4">
+                        <p className="text-lg"><strong>Name:</strong> <span className="text-gray-700">{selectedEnquiry.name}</span></p>
+                        <p className="text-lg"><strong>Email:</strong> <span className="text-gray-700">{selectedEnquiry.email}</span></p>
+                        <p className="text-lg"><strong>Phone:</strong> <span className="text-gray-700">{selectedEnquiry.phone}</span></p>
+                        <p className="text-lg"><strong>Subject:</strong> <span className="text-gray-700">{selectedEnquiry.subject}</span></p>
+                        <p className="text-lg"><strong>Message:</strong> <span className="text-gray-700">{selectedEnquiry.message}</span></p>
+                        <p className="text-lg"><strong>Status:</strong> <span className="text-gray-700">{selectedEnquiry.status}</span></p>
+                        <p className="text-lg"><strong>Created At:</strong> <span className="text-gray-700">{new Date(selectedEnquiry.createdAt).toLocaleString()}</span></p>
                     </div>
                 )}
-                <button onClick={closeDetailsModal} className="bg-red-500 text-white px-3 py-1 rounded">Close</button>
+                <button onClick={closeDetailsModal} className="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors">
+                    Close
+                </button>
             </Modal>
         </div>
     );
