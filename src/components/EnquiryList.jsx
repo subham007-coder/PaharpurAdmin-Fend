@@ -143,10 +143,18 @@ const EnquiryList = () => {
                                 </div>
                             </div>
                             <div className="flex flex-col gap-2">
+                                <select
+                                    value={enquiry.status}
+                                    onChange={(e) => handleStatusUpdate(enquiry._id, e.target.value)}
+                                    className="bg-slate-700 text-white border border-slate-600 rounded p-2"
+                                >
+                                    <option value="pending">Pending</option>
+                                    <option value="inProgress">In Progress</option>
+                                    <option value="completed">Completed</option>
+                                </select>
                                 <button
                                     onClick={() => openModal(enquiry)} // Open modal for confirmation
                                     className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition-colors"
-                                    disabled={isModalOpen} // Disable button if modal is open
                                 >
                                     Delete
                                 </button>
