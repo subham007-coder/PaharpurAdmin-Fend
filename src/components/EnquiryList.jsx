@@ -63,9 +63,14 @@ const EnquiryList = () => {
     };
 
     const handleDelete = async (id) => {
+        if (!id) {
+            toast.error('No enquiry selected for deletion.'); // Show error toast if no ID is provided
+            return;
+        }
+        
         try {
-            await api.delete(`/api/enquiries/${id}`);
-            setEnquiries(enquiries.filter(enquiry => enquiry._id !== id));
+            await api.delete(`/api/enquiries/${id}`); // Use the ID passed to the function
+            setEnquiries(enquiries.filter(enquiry => enquiry._id !== id)); // Update the state
             toast.success('Enquiry deleted successfully!'); // Show success toast
         } catch (error) {
             console.error('Error deleting enquiry:', error);
