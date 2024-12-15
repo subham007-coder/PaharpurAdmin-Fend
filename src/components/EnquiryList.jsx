@@ -63,6 +63,7 @@ const EnquiryList = () => {
     };
 
     const handleDelete = async (id) => {
+        console.log('Attempting to delete enquiry with ID:', id); // Debugging line
         if (!id) {
             toast.error('No enquiry selected for deletion.'); // Show error toast if no ID is provided
             return;
@@ -89,6 +90,7 @@ const EnquiryList = () => {
     };
 
     const openModal = (enquiry) => {
+        console.log('Opening modal for enquiry:', enquiry); // Debugging line
         setSelectedEnquiry(enquiry); // Set the selected enquiry
         setIsModalOpen(true); // Open the modal
     };
@@ -129,17 +131,8 @@ const EnquiryList = () => {
                                     <span className="font-semibold">Email:</span> {enquiry.email}
                                 </p>
                                 <p className="text-white">
-                                    <span className="font-semibold">subject:</span> {enquiry.subject}
+                                    <span className="font-semibold">Subject:</span> {enquiry.subject}
                                 </p>
-                                <div className={`mt-2 inline-block px-2 py-1 rounded text-sm ${
-                                    enquiry.status === 'completed' ? 'bg-green-500' :
-                                    enquiry.status === 'inProgress' ? 'bg-yellow-500' :
-                                    'bg-red-500'
-                                }`}>
-                                    {enquiry.status}
-                                </div>
-                            </div>
-                            <div className="flex flex-col gap-2">
                                 <select
                                     value={enquiry.status}
                                     onChange={(e) => handleStatusUpdate(enquiry._id, e.target.value)}
@@ -149,6 +142,8 @@ const EnquiryList = () => {
                                     <option value="inProgress">In Progress</option>
                                     <option value="completed">Completed</option>
                                 </select>
+                            </div>
+                            <div className="flex flex-col gap-2">
                                 <button
                                     onClick={() => openModal(enquiry)} // Open modal for confirmation
                                     className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition-colors"

@@ -3,6 +3,8 @@ import React from 'react';
 const ConfirmationModal = ({ isOpen, onClose, onConfirm, enquiryName }) => {
     if (!isOpen) return null;
 
+    console.log('Enquiry Name:', enquiryName); // Debugging line
+
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <div className="bg-zinc-900 p-6 rounded shadow-lg">
