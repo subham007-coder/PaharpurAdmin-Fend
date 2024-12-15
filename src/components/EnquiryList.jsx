@@ -142,7 +142,7 @@ const EnquiryList = () => {
                                     }`}>
                                         {enquiry.status}
                                     </div>
-                                    {/* Status Dropdown */}
+                                    {/* Status Dropdown - Moved Above Delete Button */}
                                     <select
                                         value={enquiry.status}
                                         onChange={(e) => handleStatusUpdate(enquiry._id, e.target.value)}
