@@ -38,14 +38,16 @@ const EnquiryList = () => {
     const handleStatusUpdate = async (id, newStatus) => {
         try {
             await api.put(`/api/enquiries/${id}/status`, { status: newStatus });
-            fetchEnquiries();
+            toast.success('Status updated successfully!'); // Show success toast
+            fetchEnquiries(); // Refresh the enquiries list
         } catch (error) {
             console.error('Error updating status:', error);
             if (error.response?.status === 401) {
                 setError('Please login to update status');
+                toast.error('Please login to update status'); // Show error toast
                 navigate('/login');
             } else {
-                alert('Failed to update status');
+                toast.error('Failed to update status. Please try again.'); // Show error toast
             }
         }
     };
