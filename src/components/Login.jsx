@@ -48,15 +48,11 @@ const Login = () => {
                 // Set token in axios defaults
                 api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
-                // Use requestAnimationFrame for smoother navigation
-                requestAnimationFrame(() => {
-                    // Small delay to ensure state updates are complete
-                    setTimeout(() => {
-                        navigate('/edit-header', { replace: true });
-                    }, 100);
-                });
+                // Navigate to the edit-header page
+                navigate('/edit-header', { replace: true });
             } else {
                 setError(response.data.message || 'Login failed');
+                setIsSuccess(false);
             }
         } catch (err) {
             console.error('Login error:', err);
