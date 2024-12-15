@@ -50,7 +50,7 @@ const Login = () => {
                 api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
                 // Show success toast
-                toast.success('Login successful! Redirecting...');
+                toast.success('Login successful!');
 
                 // Navigate to the edit-header page
                 navigate('/edit-header', { replace: true });

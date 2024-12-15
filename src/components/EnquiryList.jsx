@@ -4,6 +4,7 @@ import { useTheme } from '../context/ThemeContext';
 import api from '../api/axios'; // Import the configured api instance
 import Modal from 'react-modal'; // Import a modal library
 import { toast } from 'react-toastify'; // Import toast
+import ConfirmationModal from './ConfirmationModal'; // Import the modal
 
 const EnquiryList = () => {
     const { theme } = useTheme();
@@ -12,6 +13,7 @@ const EnquiryList = () => {
     const [error, setError] = useState(null);
     const navigate = useNavigate();
     const [selectedEnquiry, setSelectedEnquiry] = useState(null); // New state for selected enquiry
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         const fetchEnquiries = async () => {
@@ -49,19 +51,15 @@ const EnquiryList = () => {
     };
 
     const handleDelete = async (id) => {
-        if (window.confirm('Are you sure you want to delete this enquiry?')) {
-            try {
-                await api.delete(`/api/enquiries/${id}`);
-                fetchEnquiries();
-            } catch (error) {
-                console.error('Error deleting enquiry:', error);
-                if (error.response?.status === 401) {
-                    setError('Please login to delete enquiries');
-                    navigate('/login');
-                } else {
-                    alert('Failed to delete enquiry');
-                }
-            }
+        try {
+            await api.delete(`/api/enquiries/${id}`);
+            setEnquiries(enquiries.filter(enquiry => enquiry._id !== id));
+            toast.success('Enquiry deleted successfully!'); // Show success toast
+        } catch (error) {
+            console.error('Error deleting enquiry:', error);
+            toast.error('Failed to delete enquiry. Please try again.'); // Show error toast
+        } finally {
+            setIsModalOpen(false); // Close the modal
         }
     };
 
@@ -71,6 +69,16 @@ const EnquiryList = () => {
 
     const closeDetailsModal = () => {
         setSelectedEnquiry(null); // Clear the selected enquiry
+    };
+
+    const openModal = (enquiry) => {
+        setSelectedEnquiry(enquiry);
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setSelectedEnquiry(null);
     };
 
     if (loading) {
@@ -125,7 +133,7 @@ const EnquiryList = () => {
                                     <option value="completed">Completed</option>
                                 </select>
                                 <button
-                                    onClick={() => handleDelete(enquiry._id)}
+                                    onClick={() => openModal(enquiry)} // Open modal for confirmation
                                     className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition-colors"
                                 >
                                     Delete
@@ -165,6 +173,14 @@ const EnquiryList = () => {
                     Close
                 </button>
             </Modal>
+
+            {/* Confirmation Modal */}
+            <ConfirmationModal
+                isOpen={isModalOpen}
+                onClose={closeModal}
+                onConfirm={() => handleDelete(selectedEnquiry?._id)}
+                enquiryName={selectedEnquiry?.name} // Pass the enquiry name for display
+            />
         </div>
     );
 };
