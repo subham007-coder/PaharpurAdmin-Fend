@@ -147,7 +147,7 @@ const EnquiryList = () => {
             <Modal
                 isOpen={!!selectedEnquiry}
                 onRequestClose={closeDetailsModal}
-                className="bg-white rounded-lg shadow-lg p-6 max-w-lg max-h-[400px] mx-auto"
+                className="bg-white rounded-lg shadow-lg p-6 max-w-lg mx-auto overflow-y-auto max-h-[400px] mt-4"
                 overlayClassName="fixed inset-0 bg-black bg-opacity-50"
             >
                 <h2 className="text-2xl font-bold mb-4">Enquiry Details</h2>
