@@ -105,7 +105,7 @@ const EnquiryList = () => {
                                     <span className="font-semibold">Email:</span> {enquiry.email}
                                 </p>
                                 <p className="text-white">
-                                    <span className="font-semibold">Message:</span> {enquiry.message}
+                                    <span className="font-semibold">subject:</span> {enquiry.subject}
                                 </p>
                                 <div className={`mt-2 inline-block px-2 py-1 rounded text-sm ${
                                     enquiry.status === 'completed' ? 'bg-green-500' :
