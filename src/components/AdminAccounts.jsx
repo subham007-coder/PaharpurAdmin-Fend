@@ -59,11 +59,9 @@ const AdminAccounts = () => {
                                     <p className="text-white">
                                         <span className="font-semibold">Username:</span> {admin.username || 'N/A'}
                                     </p>
-                                    {currentUser._id === admin._id && (
-                                        <p className="text-white">
-                                            <span className="font-semibold">Email:</span> {admin.email || 'N/A'}
-                                        </p>
-                                    )}
+                                    <p className="text-white">
+                                        <span className="font-semibold">Email:</span> {admin.email || 'N/A'}
+                                    </p>
                                     <p className="text-white">
                                         <span className="font-semibold">Role:</span> {admin.role || 'N/A'}
                                     </p>
