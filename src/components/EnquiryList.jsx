@@ -142,6 +142,18 @@ const EnquiryList = () => {
                                     }`}>
                                         {enquiry.status}
                                     </div>
+                                    {/* Status Dropdown - Moved Above Delete Button
+                                    <select
+                                        value={enquiry.status}
+                                        onChange={(e) => handleStatusUpdate(enquiry._id, e.target.value)}
+                                        className="bg-slate-700 text-white border border-slate-600 rounded p-2 mt-2"
+                                    >
+                                        <option value="pending">Pending</option>
+                                        <option value="inProgress">In Progress</option>
+                                        <option value="completed">Completed</option>
+                                    </select> */}
+                                </div>
+                                <div className="flex flex-col gap-2">
                                     {/* Status Dropdown - Moved Above Delete Button */}
                                     <select
                                         value={enquiry.status}
@@ -152,8 +164,6 @@ const EnquiryList = () => {
                                         <option value="inProgress">In Progress</option>
                                         <option value="completed">Completed</option>
                                     </select>
-                                </div>
-                                <div className="flex flex-col gap-2">
                                     <button
                                         onClick={() => openDeleteModal(enquiry)} // Open delete confirmation modal
                                         className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition-colors"
